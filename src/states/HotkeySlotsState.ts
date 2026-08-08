@@ -7,7 +7,15 @@ import type { Slot } from '../@types/hotkeys';
 import type { Tag } from '../@types/tags';
 import type { Project, WorkspaceGroup } from '../@types/workspaces';
 
+import {
+	dropSlot,
+	findCurrentWorkspaceSlot,
+	insertSlot,
+	moveSlot,
+	removeSlotAndClose,
+} from '../common/slots';
 import * as states from '../common/states';
+import { reloadSharedState } from '../common/stateSync';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
 //	Variables __________________________________________________________________
@@ -43,7 +51,7 @@ export class HotkeySlotsState {
 	
 	public refresh () {
 		
-		this.slots = states.getSlots(this.context);
+		this.slots = reloadSharedState(() => states.getSlots(this.context), (slots) => this._onDidChangeSlots.fire(slots));
 		
 	}
 	
@@ -51,6 +59,27 @@ export class HotkeySlotsState {
 		
 		return this.slots;
 		
+	}
+
+	public getCurrentIndex () {
+
+		const lastOpenedSlot = states.getLastOpenedSlot(this.context);
+		const currentWorkspaceSlot = this.getCurrentWorkspaceIndex();
+
+		return currentWorkspaceSlot || (this.slots[lastOpenedSlot] ? lastOpenedSlot : 0);
+
+	}
+
+	public getCurrentWorkspaceIndex () {
+
+		return findCurrentWorkspaceSlot(this.slots, getCurrentWorkspacePath(), states.getLastOpenedSlot(this.context));
+
+	}
+
+	public rememberOpenedSlot (index: number) {
+
+		return states.updateLastOpenedSlot(this.context, index);
+
 	}
 	
 	public getByWorkspace (workspace: Project) {
@@ -108,6 +137,16 @@ export class HotkeySlotsState {
 		this._onDidChangeSlots.fire(slots);
 		
 	}
+
+	public insertWorkspace (selectedProject: Project, index: number) {
+
+		return this.applyMutation(insertSlot(this.slots, {
+			label: selectedProject.label,
+			index,
+			path: selectedProject.path,
+		}, index));
+
+	}
 	
 	public assignGroup (selectedGroup: FavoriteGroup|WorkspaceGroup, index: number) {
 		
@@ -129,6 +168,17 @@ export class HotkeySlotsState {
 		this._onDidChangeSlots.fire(slots);
 		
 	}
+
+	public insertGroup (selectedGroup: FavoriteGroup|WorkspaceGroup, index: number) {
+
+		return this.applyMutation(insertSlot(this.slots, {
+			label: selectedGroup.label,
+			index,
+			groupId: selectedGroup.id,
+			paths: selectedGroup.paths,
+		}, index));
+
+	}
 	
 	public assignTag (tag: Tag, index: number) {
 		
@@ -148,6 +198,45 @@ export class HotkeySlotsState {
 		states.updateSlots(this.context, slots);
 		this._onDidChangeSlots.fire(slots);
 		
+	}
+
+	public insertTag (tag: Tag, index: number) {
+
+		return this.applyMutation(insertSlot(this.slots, {
+			label: tag.label,
+			index,
+			tagId: tag.id,
+			paths: tag.paths,
+		}, index));
+
+	}
+
+	public insertExisting (sourceIndex: number, targetIndex: number) {
+
+		const slot = this.slots[sourceIndex];
+
+		if (!slot) return this.applyMutation(moveSlot(this.slots, sourceIndex, 1));
+
+		return this.applyMutation(insertSlot(this.slots, slot, targetIndex));
+
+	}
+
+	public drop (sourceIndex: number, targetIndex?: number) {
+
+		return this.applyMutation(dropSlot(this.slots, sourceIndex, targetIndex));
+
+	}
+
+	public move (index: number, offset: -1|1) {
+
+		return this.applyMutation(moveSlot(this.slots, index, offset));
+
+	}
+
+	public removeAndClose (index: number) {
+
+		return this.applyMutation(removeSlotAndClose(this.slots, index));
+
 	}
 	
 	public updateWorkspace (project: Project) {
@@ -290,8 +379,19 @@ export class HotkeySlotsState {
 		}
 		
 	}
-	
+
+	private applyMutation (result: ReturnType<typeof moveSlot>) {
+
+		if (!result.changed) return result;
+
+		this.slots = result.slots;
+		states.updateSlots(this.context, this.slots);
+		this._onDidChangeSlots.fire(this.slots);
+
+		return result;
+
+	}
+
 }
 
 //	Functions __________________________________________________________________
-

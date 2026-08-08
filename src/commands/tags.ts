@@ -41,7 +41,7 @@ export function activate (context: vscode.ExtensionContext) {
 		hotkeySlots: hotkeySlotsState,
 	});
 	
-	const treeView = vscode.window.createTreeView('l13ProjectsTags', {
+	const treeView = vscode.window.createTreeView('fastSwitchProjectsTags', {
 		treeDataProvider: tagsProvider,
 	});
 	
@@ -53,7 +53,7 @@ export function activate (context: vscode.ExtensionContext) {
 		
 	subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
 		
-		if (event.affectsConfiguration('l13Projects.tagDescriptionFormat')) {
+		if (event.affectsConfiguration('fastSwitchProjects.tagDescriptionFormat')) {
 			tagsProvider.tagDescriptionFormat = settings.get('tagDescriptionFormat');
 			tagsProvider.refresh();
 		}
@@ -83,16 +83,16 @@ export function activate (context: vscode.ExtensionContext) {
 //	Commands
 	
 	commands.register(context, {
-		'l13Projects.action.tag.add': () => tagsDialog.add(),
-		'l13Projects.action.tag.editWorkspaces': ({ tag }: TagTreeItem) => tagsDialog.editWorkspaces(tag),
-		'l13Projects.action.tag.pickAndOpen': ({ tag }: TagTreeItem) => tagsDialog.open(tag),
-		'l13Projects.action.tag.pickAndOpenInCurrentWindow': ({ tag }: TagTreeItem) => tagsDialog.open(tag, false),
-		'l13Projects.action.tag.pickAndOpenInNewWindow': ({ tag }: TagTreeItem) => tagsDialog.open(tag, true),
-		'l13Projects.action.tag.pickTag': () => tagsDialog.pick(),
-		'l13Projects.action.tag.rename': ({ tag }: TagTreeItem) => tagsDialog.rename(tag),
-		'l13Projects.action.tag.remove': ({ tag }: TagTreeItem) => tagsDialog.remove(tag),
+		'fastSwitchProjects.action.tag.add': () => tagsDialog.add(),
+		'fastSwitchProjects.action.tag.editWorkspaces': ({ tag }: TagTreeItem) => tagsDialog.editWorkspaces(tag),
+		'fastSwitchProjects.action.tag.pickAndOpen': ({ tag }: TagTreeItem) => tagsDialog.open(tag),
+		'fastSwitchProjects.action.tag.pickAndOpenInCurrentWindow': ({ tag }: TagTreeItem) => tagsDialog.open(tag, false),
+		'fastSwitchProjects.action.tag.pickAndOpenInNewWindow': ({ tag }: TagTreeItem) => tagsDialog.open(tag, true),
+		'fastSwitchProjects.action.tag.pickTag': () => tagsDialog.pick(),
+		'fastSwitchProjects.action.tag.rename': ({ tag }: TagTreeItem) => tagsDialog.rename(tag),
+		'fastSwitchProjects.action.tag.remove': ({ tag }: TagTreeItem) => tagsDialog.remove(tag),
 		
-		'l13Projects.action.tags.clear': () => tagsDialog.clear(),
+		'fastSwitchProjects.action.tags.clear': () => tagsDialog.clear(),
 	});
 	
 }

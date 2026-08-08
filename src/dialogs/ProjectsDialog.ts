@@ -7,6 +7,8 @@ import { formatLabel } from '../@l13/formats';
 import type { Project } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
+import * as files from '../common/files';
+import { openNewProjectsInNewWindows } from '../common/newProjectWindows';
 import * as settings from '../common/settings';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
@@ -40,7 +42,7 @@ export class ProjectsDialog {
 		
 		if (!uris) return;
 		
-		this.projectsState.addAll(uris);
+		await this.addAllAndOpen(uris);
 		
 	}
 	
@@ -50,7 +52,7 @@ export class ProjectsDialog {
 		
 		if (!uris) return;
 		
-		this.projectsState.addAll(uris);
+		await this.addAllAndOpen(uris);
 		
 	}
 	
@@ -119,8 +121,19 @@ export class ProjectsDialog {
 		}
 		
 	}
+
+	private async addAllAndOpen (uris: vscode.Uri[]) {
+
+		const projects = this.projectsState.addAll(uris);
+
+		try {
+			await openNewProjectsInNewWindows(projects, settings.openNewProjectsInNewWindow(), files.open);
+		} catch (error) {
+			vscode.window.showErrorMessage('One or more newly added projects could not be opened in a new window.');
+		}
+
+	}
 	
 }
 
 //	Functions __________________________________________________________________
-

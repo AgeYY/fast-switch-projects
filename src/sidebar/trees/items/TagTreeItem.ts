@@ -23,7 +23,7 @@ export class TagTreeItem extends TreeItem {
 	
 	public command = {
 		arguments: [this],
-		command: 'l13Projects.action.tag.pickAndOpen',
+		command: 'fastSwitchProjects.action.tag.pickAndOpen',
 		title: 'Open...',
 	};
 	

@@ -25,7 +25,7 @@ export function open (pathname: string, openInNewWindow?: boolean) {
 	
 	const newWindow = openInNewWindow ?? settings.openInNewWindow();
 	
-	vscode.commands.executeCommand('vscode.openFolder', createUri(pathname), newWindow);
+	return vscode.commands.executeCommand('vscode.openFolder', createUri(pathname), newWindow);
 	
 }
 
@@ -57,4 +57,3 @@ export async function reveal (pathname: string) {
 }
 
 //	Functions __________________________________________________________________
-

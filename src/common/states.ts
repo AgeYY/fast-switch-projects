@@ -9,6 +9,8 @@ import type { StateInfo } from '../@types/states';
 import type { Tag, TagGroupState } from '../@types/tags';
 import type { Project, SimpleGroupState, TypeGroupState, RootGroupState, WorkspaceGroup, PinnedGroupState } from '../@types/workspaces';
 
+import { getNextLastModified } from './stateSync';
+
 //	Variables __________________________________________________________________
 
 const STATE_INFO = 'stateInfo';
@@ -18,6 +20,7 @@ const NEXT_SESSION = 'nextSession';
 const TAGS = 'tags';
 
 const SLOTS = 'slots';
+const LAST_OPENED_SLOT = 'lastOpenedSlot';
 const CURRENT_WORKSPACE = 'workspace';
 
 const FAVORITES = 'favorites';
@@ -89,6 +92,18 @@ export function updateSlots (context: vscode.ExtensionContext, slots: Slot[]) {
 	
 	updateStateInfo(context);
 	
+}
+
+export function getLastOpenedSlot (context: vscode.ExtensionContext): number {
+
+	return context.globalState.get(LAST_OPENED_SLOT, 0);
+
+}
+
+export function updateLastOpenedSlot (context: vscode.ExtensionContext, index: number) {
+
+	return context.globalState.update(LAST_OPENED_SLOT, index);
+
 }
 
 export function getCurrentWorkspace (context: vscode.ExtensionContext): string[] {
@@ -294,9 +309,11 @@ export function updateSubfolderCache (context: vscode.ExtensionContext, cache: P
 //	Functions __________________________________________________________________
 
 function updateStateInfo (context: vscode.ExtensionContext) {
-	
+
+	const previousLastModified = getStateInfo(context).lastModified;
+
 	context.globalState.update(STATE_INFO, {
-		lastModified: +new Date(),
+		lastModified: getNextLastModified(previousLastModified),
 	});
 	
 }

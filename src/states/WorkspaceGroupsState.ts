@@ -110,35 +110,42 @@ export class WorkspaceGroupsState {
 		
 		const workspaceGroups = this.get();
 		
-		for (const workspaceGroup of workspaceGroups) {
-			if (workspaceGroup.label === label) return;
+		for (const existingWorkspaceGroup of workspaceGroups) {
+			if (existingWorkspaceGroup.label === label) return existingWorkspaceGroup;
 		}
-		
-		workspaceGroups.push({
+
+		const workspaceGroup: WorkspaceGroup = {
 			label,
 			id: getNextGroupId(this.context),
 			collapsed: false,
 			paths: [],
-		});
+		};
+
+		workspaceGroups.push(workspaceGroup);
 		
 		sortWorkspaceGroups(workspaceGroups);
 		
 		this.save(workspaceGroups);
 		this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
+
+		return workspaceGroup;
 		
 	}
 	
 	public addWorkspace (workspace: Project, workspaceGroup: WorkspaceGroup) {
 		
 		const workspaceGroups = this.get();
+		const selectedWorkspaceGroup = workspaceGroups.find(({ id }) => id === workspaceGroup.id) || workspaceGroup;
+
+		if (!workspaceGroups.includes(selectedWorkspaceGroup)) workspaceGroups.push(selectedWorkspaceGroup);
 		
-		if (!workspaceGroup.paths.includes(workspace.path)) {
+		if (!selectedWorkspaceGroup.paths.includes(workspace.path)) {
 			const previousWorkspaceGroup = workspaceGroups.find((group) => remove(group.paths, workspace.path));
-			workspaceGroup.paths.push(workspace.path);
-			workspaceGroup.paths.sort();
+			selectedWorkspaceGroup.paths.push(workspace.path);
+			selectedWorkspaceGroup.paths.sort();
 			this.save(workspaceGroups);
 			if (previousWorkspaceGroup) this._onDidUpdateWorkspaceGroup.fire(previousWorkspaceGroup);
-			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
+			this._onDidUpdateWorkspaceGroup.fire(selectedWorkspaceGroup);
 			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 		}
 		

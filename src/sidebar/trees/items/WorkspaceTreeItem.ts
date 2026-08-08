@@ -20,7 +20,7 @@ export class WorkspaceTreeItem extends TreeItem {
 	
 	public command = {
 		arguments: [this],
-		command: 'l13Projects.action.workspace.open',
+		command: 'fastSwitchProjects.action.workspace.open',
 		title: 'Open Workspace',
 	};
 	

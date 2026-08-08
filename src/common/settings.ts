@@ -22,13 +22,13 @@ const COLOR_CUSTOMIZATIONS = 'workbench.colorCustomizations';
 
 export function get <T = any> (key: string, value?: any) {
 	
-	return vscode.workspace.getConfiguration('l13Projects').get<T>(key, value);
+	return vscode.workspace.getConfiguration('fastSwitchProjects').get<T>(key, value);
 	
 }
 	
 export function update (key: string, value: any, global = true) {
 	
-	return vscode.workspace.getConfiguration('l13Projects').update(key, value, global);
+	return vscode.workspace.getConfiguration('fastSwitchProjects').update(key, value, global);
 	
 }
 
@@ -37,7 +37,7 @@ export function sortWorkspacesBy (): WorkspaceSorting {
 	const value = get<string>('sortWorkspacesBy').toLowerCase();
 	
 	if (value === 'simple') {
-		vscode.window.showWarningMessage('Settings: "Simple" for "l13Projects.sortWorkspacesBy" is depricated. Please use "category" instead.');
+		vscode.window.showWarningMessage('Settings: "Simple" for "fastSwitchProjects.sortWorkspacesBy" is depricated. Please use "category" instead.');
 		return 'category';
 	}
 	
@@ -49,6 +49,12 @@ export function openInNewWindow (): boolean {
 	
 	return get('openInNewWindow', false);
 	
+}
+
+export function openNewProjectsInNewWindow (): boolean {
+
+	return get('openNewProjectsInNewWindow', true);
+
 }
 
 export async function updateStatusBarColorSettings (workspacePath: string, statusbarColors: StatusBarColors) {

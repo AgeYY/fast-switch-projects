@@ -36,6 +36,9 @@ export class ProjectsState {
 	
 	private _onDidUpdateProject: vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidUpdateProject: vscode.Event<Project> = this._onDidUpdateProject.event;
+
+	private _onDidAddProject: vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
+	public readonly onDidAddProject: vscode.Event<Project> = this._onDidAddProject.event;
 	
 	private _onDidDeleteProject: vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidDeleteProject: vscode.Event<Project> = this._onDidDeleteProject.event;
@@ -110,14 +113,17 @@ export class ProjectsState {
 		this.save(projects);
 		
 		this._onDidUpdateProject.fire(newProject);
+		this._onDidAddProject.fire(newProject);
 		this._onDidChangeProjects.fire(projects);
+
+		return newProject;
 		
 	}
 	
 	public addAll (uris: vscode.Uri[]) {
 		
 		const projects = this.get();
-		const length = projects.length;
+		const newProjects: Project[] = [];
 		
 		uris.forEach((uri) => {
 			
@@ -126,18 +132,27 @@ export class ProjectsState {
 			if (projects.some((project) => project.path === path)) return;
 			
 			const newProject = createProject(projects, path, formatLabel(path));
-			
-			this._onDidUpdateProject.fire(newProject);
+
+			newProjects.push(newProject);
 			
 		});
 		
-		if (projects.length === length) return;
+		if (!newProjects.length) return;
 		
 		sortProjects(projects);
 		
 		this.save(projects);
-		
+
+		newProjects.forEach((newProject) => {
+
+			this._onDidUpdateProject.fire(newProject);
+			this._onDidAddProject.fire(newProject);
+
+		});
+
 		this._onDidChangeProjects.fire(projects);
+
+		return newProjects;
 		
 	}
 	

@@ -108,7 +108,7 @@ export class RootSorter implements WorkspacesSorter {
 		if (!hasEveryWorkspaceRoot) {
 			vscode.window.showInformationMessage('Please refresh the workspace view. The current data has to be updated.', 'Refresh').then((value) => {
 				
-				if (value) vscode.commands.executeCommand('l13Projects.action.workspaces.refresh');
+				if (value) vscode.commands.executeCommand('fastSwitchProjects.action.workspaces.refresh');
 				
 			});
 		}

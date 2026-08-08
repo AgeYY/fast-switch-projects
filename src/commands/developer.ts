@@ -39,20 +39,20 @@ export function activate (context: vscode.ExtensionContext) {
 	const dirname = path.join(context.globalStorageUri.fsPath, 'backups');
 	
 	commands.register(context, {
-		'l13Projects.action.developer.backup': () => {
+		'fastSwitchProjects.action.developer.backup': () => {
 			
 			createBackup(context, dirname, `${formatDate(new Date())}.json`);
 			
 		},
 		
-		'l13Projects.action.developer.reveal': () => {
+		'fastSwitchProjects.action.developer.reveal': () => {
 			
 			if (fs.existsSync(dirname)) files.reveal(dirname);
 			else vscode.window.showInformationMessage('No backups available');
 			
 		},
 		
-		'l13Projects.action.developer.remove': async () => {
+		'fastSwitchProjects.action.developer.remove': async () => {
 			
 			const item = await selectBackup(dirname);
 			
@@ -60,7 +60,7 @@ export function activate (context: vscode.ExtensionContext) {
 			
 		},
 		
-		'l13Projects.action.developer.restore': async () => {
+		'fastSwitchProjects.action.developer.restore': async () => {
 			
 			const item = await selectBackup(dirname);
 			
@@ -79,7 +79,7 @@ export function activate (context: vscode.ExtensionContext) {
 			
 		},
 		
-		'l13Projects.action.developer.clear': async () => {
+		'fastSwitchProjects.action.developer.clear': async () => {
 			
 			if (!await dialogs.confirm('Delete all global states?', 'Ok')) return;
 			if (!await dialogs.confirm('Are you sure?', 'Ok')) return;

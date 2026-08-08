@@ -12,18 +12,18 @@ import { getCurrentWorkspacePath, isCodeWorkspace, isRemoteWorkspace } from '../
 
 //	Variables __________________________________________________________________
 
-let revealFolderInOS = 'l13Projects.action.workspace.openContainingFolder';
+let revealFolderInOS = 'fastSwitchProjects.action.workspace.openContainingFolder';
 
 const commands = {
-	favorites: 'l13Projects.action.favorites.pickFavorite',
-	workspaces: 'l13Projects.action.workspaces.pickWorkspace',
-	tags: 'l13Projects.action.tag.pickTag',
+	favorites: 'fastSwitchProjects.action.favorites.pickFavorite',
+	workspaces: 'fastSwitchProjects.action.workspaces.pickWorkspace',
+	tags: 'fastSwitchProjects.action.tag.pickTag',
 };
 
 //	Initialize _________________________________________________________________
 
-if (isMacOs) revealFolderInOS = 'l13Projects.action.workspace.revealInFinder';
-else if (isWindows) revealFolderInOS = 'l13Projects.action.workspace.revealInExplorer';
+if (isMacOs) revealFolderInOS = 'fastSwitchProjects.action.workspace.revealInFinder';
+else if (isWindows) revealFolderInOS = 'fastSwitchProjects.action.workspace.revealInExplorer';
 
 //	Exports ____________________________________________________________________
 
@@ -52,7 +52,7 @@ export class StatusBarInfo implements vscode.Disposable {
 		
 		context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
 			
-			if (event.affectsConfiguration('l13Projects.statusBarAction') && !isRemoteWorkspace()) {
+			if (event.affectsConfiguration('fastSwitchProjects.statusBarAction') && !isRemoteWorkspace()) {
 				this.statusBarItem.command = getStatusbarCommand();
 			}
 			

@@ -1,10 +1,6 @@
 //	Imports ____________________________________________________________________
 
-import * as vscode from 'vscode';
 
-import * as commands from '../common/commands';
-
-import { Output } from '../output/Output';
 
 //	Variables __________________________________________________________________
 
@@ -16,13 +12,14 @@ import { Output } from '../output/Output';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context: vscode.ExtensionContext) {
-	
-	commands.register(context, {
-		'fastSwitchProjects.action.output.show': () => Output.current?.show(),
-	});
-	
+export type OpenProject = (path: string, openInNewWindow: boolean) => unknown;
+
+export async function openNewProjectsInNewWindows (projects: ReadonlyArray<{ path: string }>, enabled: boolean, open: OpenProject) {
+
+	if (!enabled || !projects?.length) return;
+
+	await Promise.all(projects.map((project) => open(project.path, true)));
+
 }
 
 //	Functions __________________________________________________________________
-

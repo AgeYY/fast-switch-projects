@@ -9,6 +9,7 @@ import type { GroupTreeItems, Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
+import { organizeNewProject } from '../common/projectOrganizer';
 import * as settings from '../common/settings';
 import { createUri } from '../common/uris';
 
@@ -99,7 +100,7 @@ export function activate (context: vscode.ExtensionContext) {
 	workspacesProvider.addWorkspacesSorter(rootSorter);
 	workspacesProvider.addWorkspacesSorter(typeSorter);
 	
-	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
+	const treeView = vscode.window.createTreeView('fastSwitchProjectsWorkspaces', {
 		showCollapseAll: true,
 		treeDataProvider: workspacesProvider,
 	});
@@ -135,27 +136,27 @@ export function activate (context: vscode.ExtensionContext) {
 		
 		let hasChanged = false;
 		
-		if (event.affectsConfiguration('l13Projects.sortWorkspacesBy')) {
+		if (event.affectsConfiguration('fastSwitchProjects.sortWorkspacesBy')) {
 			workspacesProvider.sortWorkspacesBy = settings.get('sortWorkspacesBy');
 			hasChanged = true;
 		}
 		
-		if (event.affectsConfiguration('l13Projects.showTagsInWorkspaces')) {
+		if (event.affectsConfiguration('fastSwitchProjects.showTagsInWorkspaces')) {
 			workspacesProvider.showTagsInWorkspaces = settings.get('showTagsInWorkspaces');
 			hasChanged = true;
 		}
 		
-		if (event.affectsConfiguration('l13Projects.workspaceDescriptionFormat')) {
+		if (event.affectsConfiguration('fastSwitchProjects.workspaceDescriptionFormat')) {
 			workspacesProvider.workspaceDescriptionFormat = settings.get('workspaceDescriptionFormat');
 			hasChanged = true;
 		}
 		
-		if (event.affectsConfiguration('l13Projects.tagDescriptionFormat')) {
+		if (event.affectsConfiguration('fastSwitchProjects.tagDescriptionFormat')) {
 			workspacesProvider.tagDescriptionFormat = settings.get('tagDescriptionFormat');
 			hasChanged = true;
 		}
 		
-		if (event.affectsConfiguration('l13Projects.groupDescriptionFormat')) {
+		if (event.affectsConfiguration('fastSwitchProjects.groupDescriptionFormat')) {
 			workspacesProvider.groupDescriptionFormat = settings.get('groupDescriptionFormat');
 			hasChanged = true;
 		}
@@ -184,6 +185,15 @@ export function activate (context: vscode.ExtensionContext) {
 		workspacesState.refresh();
 		statusBarInfo.refresh();
 		
+	}));
+
+	subscriptions.push(projectsState.onDidAddProject((project) => {
+
+		organizeNewProject(project, {
+			hotkeySlots: hotkeySlotsState,
+			workspaceGroups: workspaceGroupsState,
+		});
+
 	}));
 	
 	subscriptions.push(projectsState.onDidDeleteProject((project) => {
@@ -250,7 +260,7 @@ export function activate (context: vscode.ExtensionContext) {
 			output.message(`\n${error}\n`);
 			vscode.window.showErrorMessage(`${error.message}`, 'Show Output').then((value) => {
 				
-				if (value) vscode.commands.executeCommand('l13Projects.action.output.show');
+				if (value) vscode.commands.executeCommand('fastSwitchProjects.action.output.show');
 				
 			});
 		} else output.log(`Finished scanning folder "${result.root}" for ${type} projects. Found ${formatAmount(result.uris.length, pluralEntries)}.`);
@@ -312,28 +322,28 @@ export function activate (context: vscode.ExtensionContext) {
 	
 	commands.register(context, {
 		
-		'l13Projects.action.workspace.open': ({ project }: WorkspaceTreeItem) => files.open(project.path),
-		'l13Projects.action.workspace.openInCurrentWindow': ({ project }: WorkspaceTreeItem) => files.open(project.path, false),
-		'l13Projects.action.workspace.openInNewWindow': ({ project }: WorkspaceTreeItem) => files.open(project.path, true),
+		'fastSwitchProjects.action.workspace.open': ({ project }: WorkspaceTreeItem) => files.open(project.path),
+		'fastSwitchProjects.action.workspace.openInCurrentWindow': ({ project }: WorkspaceTreeItem) => files.open(project.path, false),
+		'fastSwitchProjects.action.workspace.openInNewWindow': ({ project }: WorkspaceTreeItem) => files.open(project.path, true),
 		
-		'l13Projects.action.workspace.addToWorkspace': ({ project }: WorkspaceTreeItem) => addToWorkspace(project),
-		'l13Projects.action.workspace.addToFavorites': ({ project }: WorkspaceTreeItem) => favoritesState.add(project),
-		'l13Projects.action.workspace.addToGroup': ({ project }: WorkspaceTreeItem) => workspaceGroupsDialog.addWorkspaceToGroup(project),
-		'l13Projects.action.workspace.removeFromGroup': ({ project }: WorkspaceTreeItem) => workspaceGroupsState.removeWorkspace(project),
+		'fastSwitchProjects.action.workspace.addToWorkspace': ({ project }: WorkspaceTreeItem) => addToWorkspace(project),
+		'fastSwitchProjects.action.workspace.addToFavorites': ({ project }: WorkspaceTreeItem) => favoritesState.add(project),
+		'fastSwitchProjects.action.workspace.addToGroup': ({ project }: WorkspaceTreeItem) => workspaceGroupsDialog.addWorkspaceToGroup(project),
+		'fastSwitchProjects.action.workspace.removeFromGroup': ({ project }: WorkspaceTreeItem) => workspaceGroupsState.removeWorkspace(project),
 		
-		'l13Projects.action.workspace.editTags': ({ project }: WorkspaceTreeItem) => tagsDialog.editTags(project),
+		'fastSwitchProjects.action.workspace.editTags': ({ project }: WorkspaceTreeItem) => tagsDialog.editTags(project),
 		
-		'l13Projects.action.workspaces.addProject': () => projectsDialog.addDirectory(),
-		'l13Projects.action.workspaces.addWorkspaceProject': () => projectsDialog.addWorkspaceFile(),
-		'l13Projects.action.workspaces.saveProject': () => projectsDialog.save(),
-		'l13Projects.action.workspace.saveDetectedProject': ({ project }: WorkspaceTreeItem) => projectsDialog.save(project),
+		'fastSwitchProjects.action.workspaces.addProject': () => projectsDialog.addDirectory(),
+		'fastSwitchProjects.action.workspaces.addWorkspaceProject': () => projectsDialog.addWorkspaceFile(),
+		'fastSwitchProjects.action.workspaces.saveProject': () => projectsDialog.save(),
+		'fastSwitchProjects.action.workspace.saveDetectedProject': ({ project }: WorkspaceTreeItem) => projectsDialog.save(project),
 		
-		'l13Projects.action.workspaces.pickWorkspace': () => workspacesDialog.pick(),
+		'fastSwitchProjects.action.workspaces.pickWorkspace': () => workspacesDialog.pick(),
 		
-		'l13Projects.action.workspaces.refresh': () => {
+		'fastSwitchProjects.action.workspaces.refresh': () => {
 			
 			vscode.window.withProgress({
-				location: { viewId: 'l13ProjectsWorkspaces' },
+				location: { viewId: 'fastSwitchProjectsWorkspaces' },
 			}, async () => {
 				
 				await updateProjectsAndFavorites(statusBarColorState, favoritesState, projectsState);
@@ -344,43 +354,43 @@ export function activate (context: vscode.ExtensionContext) {
 			
 		},
 		
-		'l13Projects.action.workspaceGroups.add': () => workspaceGroupsDialog.add(),
-		'l13Projects.action.workspaceGroup.addToFavorites': ({ group }: WorkspaceGroupTreeItem) => {
+		'fastSwitchProjects.action.workspaceGroups.add': () => workspaceGroupsDialog.add(),
+		'fastSwitchProjects.action.workspaceGroup.addToFavorites': ({ group }: WorkspaceGroupTreeItem) => {
 			
 			const workspaces = group.paths.map((path) => workspacesState.getByPath(path));
 			
 			favoriteGroupsDialog.addWorkspaceGroup(group, workspaces.filter((workspace) => !!workspace));
 			
 		},
-		'l13Projects.action.workspaceGroup.editWorkspaces': ({ group }: WorkspaceGroupTreeItem) => {
+		'fastSwitchProjects.action.workspaceGroup.editWorkspaces': ({ group }: WorkspaceGroupTreeItem) => {
 			
 			workspacesDialog.editWorkspaces(group);
 			
 		},
-		'l13Projects.action.workspaceGroup.rename': ({ group }: WorkspaceGroupTreeItem) => workspaceGroupsDialog.rename(group),
-		'l13Projects.action.workspaceGroup.remove': ({ group }: WorkspaceGroupTreeItem) => workspaceGroupsDialog.remove(group),
-		'l13Projects.action.workspaceGroups.clear': () => workspaceGroupsDialog.clear(),
+		'fastSwitchProjects.action.workspaceGroup.rename': ({ group }: WorkspaceGroupTreeItem) => workspaceGroupsDialog.rename(group),
+		'fastSwitchProjects.action.workspaceGroup.remove': ({ group }: WorkspaceGroupTreeItem) => workspaceGroupsDialog.remove(group),
+		'fastSwitchProjects.action.workspaceGroups.clear': () => workspaceGroupsDialog.clear(),
 		
-		'l13Projects.action.project.rename': ({ project }: WorkspaceTreeItem) => projectsDialog.rename(project),
-		'l13Projects.action.project.remove': ({ project }: WorkspaceTreeItem) => projectsDialog.remove(project),
-		'l13Projects.action.projects.clear': () => projectsDialog.clear(),
+		'fastSwitchProjects.action.project.rename': ({ project }: WorkspaceTreeItem) => projectsDialog.rename(project),
+		'fastSwitchProjects.action.project.remove': ({ project }: WorkspaceTreeItem) => projectsDialog.remove(project),
+		'fastSwitchProjects.action.projects.clear': () => projectsDialog.clear(),
 		
-		'l13Projects.action.colorPicker.selectColor': ({ project }: WorkspaceTreeItem) => {
+		'fastSwitchProjects.action.colorPicker.selectColor': ({ project }: WorkspaceTreeItem) => {
 			
 			workspacesProvider.showColorPicker(project);
 			treeView.reveal(workspacesProvider.colorPickerTreeItem, { focus: true, select: true });
 			
 		},
 		
-		'l13Projects.action.colorPicker.pickColor1': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 1),
-		'l13Projects.action.colorPicker.pickColor2': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 2),
-		'l13Projects.action.colorPicker.pickColor3': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 3),
-		'l13Projects.action.colorPicker.pickColor4': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 4),
-		'l13Projects.action.colorPicker.pickColor5': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 5),
-		'l13Projects.action.colorPicker.pickColor6': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 6),
-		'l13Projects.action.colorPicker.pickColor7': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 7),
-		'l13Projects.action.colorPicker.removeColor': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 0),
-		'l13Projects.action.colorPicker.hide': () => workspacesProvider.hideColorPicker(),
+		'fastSwitchProjects.action.colorPicker.pickColor1': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 1),
+		'fastSwitchProjects.action.colorPicker.pickColor2': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 2),
+		'fastSwitchProjects.action.colorPicker.pickColor3': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 3),
+		'fastSwitchProjects.action.colorPicker.pickColor4': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 4),
+		'fastSwitchProjects.action.colorPicker.pickColor5': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 5),
+		'fastSwitchProjects.action.colorPicker.pickColor6': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 6),
+		'fastSwitchProjects.action.colorPicker.pickColor7': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 7),
+		'fastSwitchProjects.action.colorPicker.removeColor': () => changeStatusbBarColor(statusBarColorState, workspacesProvider, 0),
+		'fastSwitchProjects.action.colorPicker.hide': () => workspacesProvider.hideColorPicker(),
 	});
 	
 }

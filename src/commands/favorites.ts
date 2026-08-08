@@ -51,7 +51,7 @@ export function activate (context: vscode.ExtensionContext) {
 		tags: tagsState.get(),
 	});
 	
-	const treeView = vscode.window.createTreeView('l13ProjectsFavorites', {
+	const treeView = vscode.window.createTreeView('fastSwitchProjectsFavorites', {
 		treeDataProvider: favoritesProvider,
 		showCollapseAll: true,
 	});
@@ -78,12 +78,12 @@ export function activate (context: vscode.ExtensionContext) {
 		
 		let hasChanged = false;
 		
-		if (event.affectsConfiguration('l13Projects.workspaceDescriptionFormat')) {
+		if (event.affectsConfiguration('fastSwitchProjects.workspaceDescriptionFormat')) {
 			favoritesProvider.workspaceDescriptionFormat = settings.get('workspaceDescriptionFormat');
 			hasChanged = true;
 		}
 		
-		if (event.affectsConfiguration('l13Projects.groupDescriptionFormat')) {
+		if (event.affectsConfiguration('fastSwitchProjects.groupDescriptionFormat')) {
 			favoritesProvider.groupDescriptionFormat = settings.get('groupDescriptionFormat');
 			hasChanged = true;
 		}
@@ -152,17 +152,17 @@ export function activate (context: vscode.ExtensionContext) {
 //	Commands
 	
 	commands.register(context, {
-		'l13Projects.action.favorite.addToGroup': ({ project }: FavoriteTreeItems) => favoriteGroupsDialog.addFavoriteToGroup(project),
-		'l13Projects.action.favorite.removeFromGroup': ({ project }: FavoriteTreeItems) => favoriteGroupsState.removeFavorite(project),
-		'l13Projects.action.favorite.rename': ({ project }: FavoriteTreeItems) => favoritesDialog.rename(project),
-		'l13Projects.action.favorite.remove': ({ project }: FavoriteTreeItems) => favoritesDialog.remove(project),
+		'fastSwitchProjects.action.favorite.addToGroup': ({ project }: FavoriteTreeItems) => favoriteGroupsDialog.addFavoriteToGroup(project),
+		'fastSwitchProjects.action.favorite.removeFromGroup': ({ project }: FavoriteTreeItems) => favoriteGroupsState.removeFavorite(project),
+		'fastSwitchProjects.action.favorite.rename': ({ project }: FavoriteTreeItems) => favoritesDialog.rename(project),
+		'fastSwitchProjects.action.favorite.remove': ({ project }: FavoriteTreeItems) => favoritesDialog.remove(project),
 		
-		'l13Projects.action.favoriteGroups.add': () => favoriteGroupsDialog.add(),
-		'l13Projects.action.favoriteGroup.rename': ({ group }: FavoriteGroupTreeItem) => favoriteGroupsDialog.rename(group),
-		'l13Projects.action.favoriteGroup.remove': ({ group }: FavoriteGroupTreeItem) => favoriteGroupsDialog.remove(group),
+		'fastSwitchProjects.action.favoriteGroups.add': () => favoriteGroupsDialog.add(),
+		'fastSwitchProjects.action.favoriteGroup.rename': ({ group }: FavoriteGroupTreeItem) => favoriteGroupsDialog.rename(group),
+		'fastSwitchProjects.action.favoriteGroup.remove': ({ group }: FavoriteGroupTreeItem) => favoriteGroupsDialog.remove(group),
 		
-		'l13Projects.action.favorites.pickFavorite': () => favoritesDialog.pick(),
-		'l13Projects.action.favorites.clear': () => favoritesDialog.clear(),
+		'fastSwitchProjects.action.favorites.pickFavorite': () => favoritesDialog.pick(),
+		'fastSwitchProjects.action.favorites.clear': () => favoritesDialog.clear(),
 	});
 	
 }

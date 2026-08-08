@@ -26,7 +26,7 @@ export class Output {
 	
 	public constructor () {
 		
-		this.outputChannel = vscode.window.createOutputChannel('Projects');
+		this.outputChannel = vscode.window.createOutputChannel('Fast Switch Projects');
 		
 		Output.current = this;
 		

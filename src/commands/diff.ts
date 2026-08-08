@@ -30,85 +30,85 @@ export function activate (context: vscode.ExtensionContext) {
 	const diffFoldersDialog = DiffFoldersDialog.create(projectsState);
 	
 	commands.register(context, {
-		'l13Projects.action.diff.favorite.openWorkspace': ({ favorite }: DiffFavoriteTreeItem) => {
+		'fastSwitchProjects.action.diff.favorite.openWorkspace': ({ favorite }: DiffFavoriteTreeItem) => {
 					
 			diffFoldersDialog.openWorkspace([favorite.fileA, favorite.fileB]);
 			
 		},
 
-		'l13Projects.action.diff.favorite.openAsWorkspace': ({ favorite }: DiffFavoriteTreeItem) => {
+		'fastSwitchProjects.action.diff.favorite.openAsWorkspace': ({ favorite }: DiffFavoriteTreeItem) => {
 			
 			sessions.openAsWorkspace([favorite.fileA, favorite.fileB], sessionsState, projectsState);
 			
 		},
 
-		'l13Projects.action.diff.favorite.addFoldersToWorkspace': ({ favorite }: DiffFavoriteTreeItem) => {
+		'fastSwitchProjects.action.diff.favorite.addFoldersToWorkspace': ({ favorite }: DiffFavoriteTreeItem) => {
 			
 			sessions.addFoldersToWorkspace([favorite.fileA, favorite.fileB], projectsState);
 			
 		},
 				
-		'l13Projects.action.diff.favorite.revealInFinder': ({ favorite }: DiffFavoriteTreeItem) => {
+		'fastSwitchProjects.action.diff.favorite.revealInFinder': ({ favorite }: DiffFavoriteTreeItem) => {
 					
 			diffFoldersDialog.reveal([favorite.fileA, favorite.fileB]);
 			
 		},
 
-		'l13Projects.action.diff.favorite.revealInExplorer': ({ favorite }: DiffFavoriteTreeItem) => {
+		'fastSwitchProjects.action.diff.favorite.revealInExplorer': ({ favorite }: DiffFavoriteTreeItem) => {
 			
 			diffFoldersDialog.reveal([favorite.fileA, favorite.fileB]);
 			
 		},
 
-		'l13Projects.action.diff.favorite.openContainingFolder': ({ favorite }: DiffFavoriteTreeItem) => {
+		'fastSwitchProjects.action.diff.favorite.openContainingFolder': ({ favorite }: DiffFavoriteTreeItem) => {
 			
 			diffFoldersDialog.reveal([favorite.fileA, favorite.fileB]);
 			
 		},
 
-		'l13Projects.action.diff.favorite.openInTerminal': ({ favorite }: DiffFavoriteTreeItem) => {
+		'fastSwitchProjects.action.diff.favorite.openInTerminal': ({ favorite }: DiffFavoriteTreeItem) => {
 			
 			diffFoldersDialog.openInTerminal([favorite.fileA, favorite.fileB]);
 			
 		},
 
-		'l13Projects.action.diff.history.openWorkspace': ({ comparison }: DiffHistoryTreeItem) => {
+		'fastSwitchProjects.action.diff.history.openWorkspace': ({ comparison }: DiffHistoryTreeItem) => {
 			
 			diffFoldersDialog.openWorkspace([comparison.fileA, comparison.fileB]);
 			
 		},
 
-		'l13Projects.action.diff.history.openAsWorkspace': ({ comparison }: DiffHistoryTreeItem) => {
+		'fastSwitchProjects.action.diff.history.openAsWorkspace': ({ comparison }: DiffHistoryTreeItem) => {
 			
 			sessions.openAsWorkspace([comparison.fileA, comparison.fileB], sessionsState, projectsState);
 			
 		},
 
-		'l13Projects.action.diff.history.addFoldersToWorkspace': ({ comparison }: DiffHistoryTreeItem) => {
+		'fastSwitchProjects.action.diff.history.addFoldersToWorkspace': ({ comparison }: DiffHistoryTreeItem) => {
 			
 			sessions.addFoldersToWorkspace([comparison.fileA, comparison.fileB], projectsState);
 			
 		},
 		
-		'l13Projects.action.diff.history.revealInFinder': ({ comparison }: DiffHistoryTreeItem) => {
+		'fastSwitchProjects.action.diff.history.revealInFinder': ({ comparison }: DiffHistoryTreeItem) => {
 			
 			diffFoldersDialog.reveal([comparison.fileA, comparison.fileB]);
 			
 		},
 		
-		'l13Projects.action.diff.history.revealInExplorer': ({ comparison }: DiffHistoryTreeItem) => {
+		'fastSwitchProjects.action.diff.history.revealInExplorer': ({ comparison }: DiffHistoryTreeItem) => {
 			
 			diffFoldersDialog.reveal([comparison.fileA, comparison.fileB]);
 			
 		},
 		
-		'l13Projects.action.diff.history.openContainingFolder': ({ comparison }: DiffHistoryTreeItem) => {
+		'fastSwitchProjects.action.diff.history.openContainingFolder': ({ comparison }: DiffHistoryTreeItem) => {
 			
 			diffFoldersDialog.reveal([comparison.fileA, comparison.fileB]);
 			
 		},
 		
-		'l13Projects.action.diff.history.openInTerminal': ({ comparison }: DiffHistoryTreeItem) => {
+		'fastSwitchProjects.action.diff.history.openInTerminal': ({ comparison }: DiffHistoryTreeItem) => {
 			
 			diffFoldersDialog.openInTerminal([comparison.fileA, comparison.fileB]);
 			

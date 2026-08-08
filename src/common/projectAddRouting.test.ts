@@ -1,0 +1,107 @@
+//	Imports ____________________________________________________________________
+
+import * as assert from 'assert';
+import * as fs from 'fs';
+import * as path from 'path';
+
+//	Variables __________________________________________________________________
+
+const projectsStateSource = readSource('states/ProjectsState.ts');
+const projectsDialogSource = readSource('dialogs/ProjectsDialog.ts');
+
+//	Initialize _________________________________________________________________
+
+describe('project add routing', () => {
+
+	it('emits the add-only event from single and multi-project additions', () => {
+
+		const addSource = getMethodSource(projectsStateSource, 'add', 'addAll');
+		const addAllSource = getMethodSource(projectsStateSource, 'addAll', 'update');
+
+		assert.ok(addSource.includes('this._onDidAddProject.fire(newProject)'));
+		assert.ok(addAllSource.includes('this._onDidAddProject.fire(newProject)'));
+
+	});
+
+	it('returns before emitting when a single or multi-project addition is a duplicate', () => {
+
+		const addSource = getMethodSource(projectsStateSource, 'add', 'addAll');
+		const addAllSource = getMethodSource(projectsStateSource, 'addAll', 'update');
+		const addDuplicateGuard = addSource.indexOf('if (project.path === path) return');
+		const addAllDuplicateGuard = addAllSource.indexOf('if (projects.some((project) => project.path === path)) return');
+
+		assert.ok(addDuplicateGuard >= 0);
+		assert.ok(addAllDuplicateGuard >= 0);
+		assert.ok(addDuplicateGuard < addSource.indexOf('_onDidAddProject.fire'));
+		assert.ok(addAllDuplicateGuard < addAllSource.indexOf('_onDidAddProject.fire'));
+
+	});
+
+	it('does not emit the add-only event when a project is renamed', () => {
+
+		const renameSource = getMethodSource(projectsStateSource, 'rename', 'remove');
+
+		assert.ok(!renameSource.includes('_onDidAddProject'));
+
+	});
+
+	it('does not route imports, scans, or detected projects through the add-only event', () => {
+
+		const importSource = readSource('commands/data.ts');
+		const detectionSource = readSource('states/WorkspacesState.ts');
+
+		assert.ok(!importSource.includes('onDidAddProject'));
+		assert.ok(!detectionSource.includes('onDidAddProject'));
+		assert.ok(!detectionSource.includes('projectsState.add'));
+
+	});
+
+	it('opens only projects selected by the explicit add commands', () => {
+
+		const addDirectorySource = getMethodSource(projectsDialogSource, 'addDirectory', 'addWorkspaceFile');
+		const addWorkspaceFileSource = getMethodSource(projectsDialogSource, 'addWorkspaceFile', 'save');
+		const saveSource = getMethodSource(projectsDialogSource, 'save', 'rename');
+
+		assert.ok(addDirectorySource.includes('addAllAndOpen'));
+		assert.ok(addWorkspaceFileSource.includes('addAllAndOpen'));
+		assert.ok(!saveSource.includes('addAllAndOpen'));
+		assert.ok(!saveSource.includes('openNewProjectsInNewWindows'));
+
+	});
+
+});
+
+//	Exports ____________________________________________________________________
+
+
+
+//	Functions __________________________________________________________________
+
+function readSource (relativePath: string) {
+
+	return fs.readFileSync(path.resolve(process.cwd(), 'src', relativePath), 'utf8');
+
+}
+
+function getMethodSource (source: string, methodName: string, nextMethodName: string) {
+
+	const start = findMethodStart(source, methodName);
+	const end = findMethodStart(source, nextMethodName, start);
+
+	assert.ok(start >= 0, `Method ${methodName} was not found`);
+	assert.ok(end > start, `Method ${nextMethodName} was not found after ${methodName}`);
+
+	return source.slice(start, end);
+
+}
+
+function findMethodStart (source: string, methodName: string, fromIndex = 0) {
+
+	const indexes = [
+		source.indexOf(`public ${methodName} (`, fromIndex),
+		source.indexOf(`public async ${methodName} (`, fromIndex),
+	].filter((index) => index >= 0);
+
+	return indexes.length ? Math.min(...indexes) : -1;
+
+}
