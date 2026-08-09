@@ -51,27 +51,6 @@ export function activate (context: vscode.ExtensionContext) {
 		tags: tagsState.get(),
 	});
 	
-	const treeView = vscode.window.createTreeView('fastSwitchProjectsFavorites', {
-		treeDataProvider: favoritesProvider,
-		showCollapseAll: true,
-	});
-	
-//	Tree View
-	
-	subscriptions.push(treeView);
-	
-	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
-		
-		favoriteGroupsState.saveCollapsedState(<FavoriteGroupTreeItem>element, true);
-		
-	}));
-	
-	subscriptions.push(treeView.onDidExpandElement(({ element }) => {
-		
-		favoriteGroupsState.saveCollapsedState(<FavoriteGroupTreeItem>element, false);
-		
-	}));
-	
 //	Favorites Provider
 		
 	subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
@@ -168,4 +147,3 @@ export function activate (context: vscode.ExtensionContext) {
 }
 
 //	Functions __________________________________________________________________
-

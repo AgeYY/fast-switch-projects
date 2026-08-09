@@ -4,7 +4,8 @@ import * as vscode from 'vscode';
 
 import { isMacOs } from '../@l13/platforms';
 
-import { isRemoteWorkspace } from './workspaces';
+import { dirname } from './uris';
+import { getCurrentWorkspaceUri, isRemoteWorkspace } from './workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -17,11 +18,14 @@ import { isRemoteWorkspace } from './workspaces';
 //	Exports ____________________________________________________________________
 
 export async function openWorkspaceFolder () {
+
+	const defaultUri = getProjectPickerDefaultUri();
 	
 	return await vscode.window.showOpenDialog(isMacOs && !isRemoteWorkspace() ? {
 		canSelectFiles: true,
 		canSelectFolders: true,
 		canSelectMany: true,
+		defaultUri,
 		filters: {
 			Workspaces: ['code-workspace'],
 		},
@@ -29,6 +33,7 @@ export async function openWorkspaceFolder () {
 		canSelectFiles: false,
 		canSelectFolders: true,
 		canSelectMany: true,
+		defaultUri,
 	}) || null;
 	
 }
@@ -44,11 +49,20 @@ export async function openWorkspaceFile () {
 		canSelectFiles: true,
 		canSelectFolders: false,
 		canSelectMany: true,
+		defaultUri: getProjectPickerDefaultUri(),
 		filters: {
 			Workspaces: ['code-workspace'],
 		},
 	}) || null;
 	
+}
+
+export function getProjectPickerDefaultUri () {
+
+	const uri = getCurrentWorkspaceUri();
+
+	return uri && uri.scheme !== 'untitled' ? <vscode.Uri>dirname(uri) : undefined;
+
 }
 	
 export async function confirm (text: string, ...buttons: string[]) {
@@ -58,4 +72,3 @@ export async function confirm (text: string, ...buttons: string[]) {
 }
 
 //	Functions __________________________________________________________________
-

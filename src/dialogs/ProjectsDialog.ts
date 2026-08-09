@@ -9,10 +9,13 @@ import type { Project } from '../@types/workspaces';
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
 import { openNewProjectsInNewWindows } from '../common/newProjectWindows';
+import { organizeNewProject } from '../common/projectOrganizer';
 import * as settings from '../common/settings';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
+import type { HotkeySlotsState } from '../states/HotkeySlotsState';
 import type { ProjectsState } from '../states/ProjectsState';
+import type { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 
@@ -28,13 +31,14 @@ export class ProjectsDialog {
 	
 	private static current: ProjectsDialog = null;
 	
-	public static create (projectsState: ProjectsState) {
+	public static create (projectsState: ProjectsState, hotkeySlotsState: HotkeySlotsState, workspaceGroupsState: WorkspaceGroupsState) {
 		
-		return ProjectsDialog.current || (ProjectsDialog.current = new ProjectsDialog(projectsState));
+		return ProjectsDialog.current || (ProjectsDialog.current = new ProjectsDialog(projectsState, hotkeySlotsState, workspaceGroupsState));
 		
 	}
 	
-	private constructor (private readonly projectsState: ProjectsState) {}
+	private constructor (private readonly projectsState: ProjectsState, private readonly hotkeySlotsState: HotkeySlotsState,
+		private readonly workspaceGroupsState: WorkspaceGroupsState) {}
 	
 	public async addDirectory () {
 		
@@ -75,7 +79,7 @@ export class ProjectsDialog {
 			
 			if (!label) return;
 			
-			this.projectsState.add(path, label);
+			this.organize(this.projectsState.add(path, label));
 		} else if (vscode.workspace.workspaceFile?.scheme === 'untitled') {
 			vscode.window.showWarningMessage('Please save your current workspace first.');
 			vscode.commands.executeCommand('workbench.action.saveWorkspaceAs');
@@ -125,12 +129,24 @@ export class ProjectsDialog {
 	private async addAllAndOpen (uris: vscode.Uri[]) {
 
 		const projects = this.projectsState.addAll(uris);
+		projects?.forEach((project) => this.organize(project));
 
 		try {
 			await openNewProjectsInNewWindows(projects, settings.openNewProjectsInNewWindow(), files.open, () => this.projectsState.persistPendingState());
 		} catch (error) {
 			vscode.window.showErrorMessage('One or more newly added projects could not be opened in a new window.');
 		}
+
+	}
+
+	private organize (project: Project) {
+
+		if (!project) return;
+
+		organizeNewProject(project, {
+			hotkeySlots: this.hotkeySlotsState,
+			workspaceGroups: this.workspaceGroupsState,
+		});
 
 	}
 	

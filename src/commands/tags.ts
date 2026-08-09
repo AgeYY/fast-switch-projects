@@ -41,14 +41,6 @@ export function activate (context: vscode.ExtensionContext) {
 		hotkeySlots: hotkeySlotsState,
 	});
 	
-	const treeView = vscode.window.createTreeView('fastSwitchProjectsTags', {
-		treeDataProvider: tagsProvider,
-	});
-	
-//	Tree View
-	
-	subscriptions.push(treeView);
-	
 //	Workspaces Provider
 		
 	subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
@@ -98,4 +90,3 @@ export function activate (context: vscode.ExtensionContext) {
 }
 
 //	Functions __________________________________________________________________
-

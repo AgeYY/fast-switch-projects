@@ -65,16 +65,8 @@
 					"name": "Slots"
 				},
 				{
-					"id": "fastSwitchProjectsFavorites",
-					"name": "Favorites"
-				},
-				{
 					"id": "fastSwitchProjectsWorkspaces",
 					"name": "Workspaces"
-				},
-				{
-					"id": "fastSwitchProjectsTags",
-					"name": "Tags"
 				}
 			]
 		},
@@ -84,16 +76,8 @@
 				"contents": "You can also open a workspace from Fast Switch Projects.\n[Open Workspace](command:fastSwitchProjects.action.workspaces.pickWorkspace)"
 			},
 			{
-				"view": "fastSwitchProjectsFavorites",
-				"contents": "No favorite workspaces are available."
-			},
-			{
 				"view": "fastSwitchProjectsWorkspaces",
 				"contents": "No workspaces found.\n[Add Project](command:fastSwitchProjects.action.workspaces.addProject)\nYou can scan folders to detect Git repositories, Visual Studio Code folders or workspace files. Open the [Settings](command:workbench.action.openSettings) and define folders in which the extension should search."
-			},
-			{
-				"view": "fastSwitchProjectsTags",
-				"contents": "No tags are available.\n[New Tag](command:fastSwitchProjects.action.tag.add)\nOrganize your workspaces with tags. Each workspace can have multiple tags."
 			}
 		],
 		"commands": [
@@ -1076,11 +1060,6 @@
 					"group": "navigation@1"
 				},
 				{
-					"command": "fastSwitchProjects.action.favoriteGroups.add",
-					"when": "view == fastSwitchProjectsFavorites",
-					"group": "navigation@1"
-				},
-				{
 					"command": "fastSwitchProjects.action.workspaces.addProject",
 					"when": "view == fastSwitchProjectsWorkspaces",
 					"group": "navigation@1"
@@ -1099,11 +1078,6 @@
 					"command": "fastSwitchProjects.action.workspaces.refresh",
 					"when": "view == fastSwitchProjectsWorkspaces",
 					"group": "navigation@4"
-				},
-				{
-					"command": "fastSwitchProjects.action.tag.add",
-					"when": "view == fastSwitchProjectsTags",
-					"group": "navigation@1"
 				}
 			],
 			"view/item/context": [

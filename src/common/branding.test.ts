@@ -37,6 +37,17 @@ describe('public branding', () => {
 
 	});
 
+	it('shows only Slots and Workspaces in the activity view', () => {
+
+		const views = <Array<{ id: string }>>manifest.contributes.views.fastSwitchProjects;
+
+		assert.deepStrictEqual(views.map(({ id }) => id), [
+			'fastSwitchProjectsSlots',
+			'fastSwitchProjectsWorkspaces',
+		]);
+
+	});
+
 	it('keeps the original software notice and public fork credit', () => {
 
 		const license = fs.readFileSync(path.resolve(root, 'LICENSE'), 'utf-8');

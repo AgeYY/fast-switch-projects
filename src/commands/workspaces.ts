@@ -9,7 +9,6 @@ import type { GroupTreeItems, Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
-import { organizeNewProject } from '../common/projectOrganizer';
 import * as settings from '../common/settings';
 import { createUri } from '../common/uris';
 
@@ -72,7 +71,7 @@ export function activate (context: vscode.ExtensionContext) {
 	const workspaceGroupsState = WorkspaceGroupsState.create(context);
 	const workspacesState = WorkspacesState.create(context);
 	
-	const projectsDialog = ProjectsDialog.create(projectsState);
+	const projectsDialog = ProjectsDialog.create(projectsState, hotkeySlotsState, workspaceGroupsState);
 	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState, workspaceGroupsState);
 	const tagsDialog = TagsDialog.create(tagsState, workspacesState, projectsState);
 	const workspaceGroupsDialog = WorkspaceGroupsDialog.create(workspaceGroupsState, favoriteGroupsState);
@@ -187,15 +186,6 @@ export function activate (context: vscode.ExtensionContext) {
 		
 	}));
 
-	subscriptions.push(projectsState.onDidAddProject((project) => {
-
-		organizeNewProject(project, {
-			hotkeySlots: hotkeySlotsState,
-			workspaceGroups: workspaceGroupsState,
-		});
-
-	}));
-	
 	subscriptions.push(projectsState.onDidDeleteProject((project) => {
 		
 		if (project.color) settings.updateStatusBarColorSettings(project.path, colors[0]);

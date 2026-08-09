@@ -37,9 +37,6 @@ export class ProjectsState {
 	private _onDidUpdateProject: vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidUpdateProject: vscode.Event<Project> = this._onDidUpdateProject.event;
 
-	private _onDidAddProject: vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
-	public readonly onDidAddProject: vscode.Event<Project> = this._onDidAddProject.event;
-	
 	private _onDidDeleteProject: vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidDeleteProject: vscode.Event<Project> = this._onDidDeleteProject.event;
 	
@@ -119,7 +116,6 @@ export class ProjectsState {
 		this.save(projects);
 		
 		this._onDidUpdateProject.fire(newProject);
-		this._onDidAddProject.fire(newProject);
 		this._onDidChangeProjects.fire(projects);
 
 		return newProject;
@@ -152,7 +148,6 @@ export class ProjectsState {
 		newProjects.forEach((newProject) => {
 
 			this._onDidUpdateProject.fire(newProject);
-			this._onDidAddProject.fire(newProject);
 
 		});
 

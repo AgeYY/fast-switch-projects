@@ -8,22 +8,23 @@ import * as path from 'path';
 
 const projectsStateSource = readSource('states/ProjectsState.ts');
 const projectsDialogSource = readSource('dialogs/ProjectsDialog.ts');
+const dialogsSource = readSource('common/dialogs.ts');
 
 //	Initialize _________________________________________________________________
 
 describe('project add routing', () => {
 
-	it('emits the add-only event from single and multi-project additions', () => {
+	it('organizes single and multi-project additions directly in the project dialog', () => {
 
-		const addSource = getMethodSource(projectsStateSource, 'add', 'addAll');
-		const addAllSource = getMethodSource(projectsStateSource, 'addAll', 'update');
+		const saveSource = getMethodSource(projectsDialogSource, 'save', 'rename');
+		const addAllAndOpenSource = getMethodSource(projectsDialogSource, 'addAllAndOpen', 'organize');
 
-		assert.ok(addSource.includes('this._onDidAddProject.fire(newProject)'));
-		assert.ok(addAllSource.includes('this._onDidAddProject.fire(newProject)'));
+		assert.ok(saveSource.includes('this.organize(this.projectsState.add(path, label))'));
+		assert.ok(addAllAndOpenSource.includes('projects?.forEach((project) => this.organize(project))'));
 
 	});
 
-	it('returns before emitting when a single or multi-project addition is a duplicate', () => {
+	it('returns before creating duplicate single or multi-project additions', () => {
 
 		const addSource = getMethodSource(projectsStateSource, 'add', 'addAll');
 		const addAllSource = getMethodSource(projectsStateSource, 'addAll', 'update');
@@ -32,26 +33,18 @@ describe('project add routing', () => {
 
 		assert.ok(addDuplicateGuard >= 0);
 		assert.ok(addAllDuplicateGuard >= 0);
-		assert.ok(addDuplicateGuard < addSource.indexOf('_onDidAddProject.fire'));
-		assert.ok(addAllDuplicateGuard < addAllSource.indexOf('_onDidAddProject.fire'));
+		assert.ok(addDuplicateGuard < addSource.indexOf('createProject'));
+		assert.ok(addAllDuplicateGuard < addAllSource.indexOf('createProject'));
 
 	});
 
-	it('does not emit the add-only event when a project is renamed', () => {
-
-		const renameSource = getMethodSource(projectsStateSource, 'rename', 'remove');
-
-		assert.ok(!renameSource.includes('_onDidAddProject'));
-
-	});
-
-	it('does not route imports, scans, or detected projects through the add-only event', () => {
+	it('does not route imports, scans, or detected projects through add organization', () => {
 
 		const importSource = readSource('commands/data.ts');
 		const detectionSource = readSource('states/WorkspacesState.ts');
 
-		assert.ok(!importSource.includes('onDidAddProject'));
-		assert.ok(!detectionSource.includes('onDidAddProject'));
+		assert.ok(!importSource.includes('organizeNewProject'));
+		assert.ok(!detectionSource.includes('organizeNewProject'));
 		assert.ok(!detectionSource.includes('projectsState.add'));
 
 	});
@@ -77,6 +70,14 @@ describe('project add routing', () => {
 
 		assert.ok(persistIndex >= 0);
 		assert.ok(openIndex >= 0);
+
+	});
+
+	it('starts project pickers outside the current workspace directory', () => {
+
+		assert.ok(dialogsSource.includes('const defaultUri = getProjectPickerDefaultUri()'));
+		assert.ok(dialogsSource.includes('defaultUri: getProjectPickerDefaultUri()'));
+		assert.ok(dialogsSource.includes('<vscode.Uri>dirname(uri)'));
 
 	});
 
