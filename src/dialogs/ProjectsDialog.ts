@@ -127,7 +127,7 @@ export class ProjectsDialog {
 		const projects = this.projectsState.addAll(uris);
 
 		try {
-			await openNewProjectsInNewWindows(projects, settings.openNewProjectsInNewWindow(), files.open);
+			await openNewProjectsInNewWindows(projects, settings.openNewProjectsInNewWindow(), files.open, () => this.projectsState.persistPendingState());
 		} catch (error) {
 			vscode.window.showErrorMessage('One or more newly added projects could not be opened in a new window.');
 		}

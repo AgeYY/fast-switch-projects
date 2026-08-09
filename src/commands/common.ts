@@ -118,6 +118,10 @@ export function activate (context: vscode.ExtensionContext) {
 		}
 		
 	}));
+
+	// A newly opened window can already be focused before this listener is registered.
+	// Retry briefly during activation so state propagated from the creating window is rendered.
+	refreshTimeouts.push(...scheduleCrossWindowRefresh(refreshIfChanged));
 	
 	commands.register(context, {
 		'fastSwitchProjects.action.explorer.openInNewWindow': (uri: vscode.Uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),

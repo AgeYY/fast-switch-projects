@@ -69,6 +69,17 @@ describe('project add routing', () => {
 
 	});
 
+	it('persists all add-event state before opening new project windows', () => {
+
+		const addAllAndOpenSource = getMethodSource(projectsDialogSource, 'addAllAndOpen', null);
+		const persistIndex = addAllAndOpenSource.indexOf('this.projectsState.persistPendingState()');
+		const openIndex = addAllAndOpenSource.indexOf('openNewProjectsInNewWindows');
+
+		assert.ok(persistIndex >= 0);
+		assert.ok(openIndex >= 0);
+
+	});
+
 });
 
 //	Exports ____________________________________________________________________
@@ -83,10 +94,10 @@ function readSource (relativePath: string) {
 
 }
 
-function getMethodSource (source: string, methodName: string, nextMethodName: string) {
+function getMethodSource (source: string, methodName: string, nextMethodName: string|null) {
 
 	const start = findMethodStart(source, methodName);
-	const end = findMethodStart(source, nextMethodName, start);
+	const end = nextMethodName ? findMethodStart(source, nextMethodName, start) : source.length;
 
 	assert.ok(start >= 0, `Method ${methodName} was not found`);
 	assert.ok(end > start, `Method ${nextMethodName} was not found after ${methodName}`);
@@ -100,6 +111,8 @@ function findMethodStart (source: string, methodName: string, fromIndex = 0) {
 	const indexes = [
 		source.indexOf(`public ${methodName} (`, fromIndex),
 		source.indexOf(`public async ${methodName} (`, fromIndex),
+		source.indexOf(`private ${methodName} (`, fromIndex),
+		source.indexOf(`private async ${methodName} (`, fromIndex),
 	].filter((index) => index >= 0);
 
 	return indexes.length ? Math.min(...indexes) : -1;

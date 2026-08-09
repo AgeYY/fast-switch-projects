@@ -54,6 +54,12 @@ export function getStateInfo (context: vscode.ExtensionContext): StateInfo {
 	
 }
 
+export function persistPendingState (context: vscode.ExtensionContext) {
+
+	return updateStateInfo(context);
+
+}
+
 export function getNextSession (context: vscode.ExtensionContext): NextSession {
 	
 	return context.globalState.get(NEXT_SESSION, null);
@@ -312,7 +318,7 @@ function updateStateInfo (context: vscode.ExtensionContext) {
 
 	const previousLastModified = getStateInfo(context).lastModified;
 
-	context.globalState.update(STATE_INFO, {
+	return context.globalState.update(STATE_INFO, {
 		lastModified: getNextLastModified(previousLastModified),
 	});
 	

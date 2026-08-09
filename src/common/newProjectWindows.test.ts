@@ -44,6 +44,32 @@ describe('new project windows', () => {
 
 	});
 
+	it('waits for project state to persist before opening the new window', async () => {
+
+		const events: string[] = [];
+		let finishPersistence: () => void;
+		const persistence = new Promise<void>((resolve) => finishPersistence = resolve);
+		const opening = openNewProjectsInNewWindows([{ path: '/projects/one' }], true, () => {
+
+			events.push('open');
+
+		}, async () => {
+
+			events.push('persist');
+			await persistence;
+
+		});
+
+		await Promise.resolve();
+		assert.deepStrictEqual(events, ['persist']);
+
+		finishPersistence();
+		await opening;
+
+		assert.deepStrictEqual(events, ['persist', 'open']);
+
+	});
+
 	it('does not open projects when automatic opening is disabled', async () => {
 
 		let callCount = 0;

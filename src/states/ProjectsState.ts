@@ -51,6 +51,12 @@ export class ProjectsState {
 		return states.getProjects(this.context);
 		
 	}
+
+	public persistPendingState () {
+
+		return states.persistPendingState(this.context);
+
+	}
 	
 	private save (projects: Project[]) {
 		
