@@ -4,7 +4,7 @@
 	"description": "A keyboard-first project switcher with ordered slots, drag-and-drop reordering, and automatic window opening",
 	"version": "1.0.0",
 	"publisher": "ZeyuanYe",
-	"license": "SEE LICENSE IN LICENSE.md",
+	"license": "SEE LICENSE IN LICENSE",
 	"homepage": "https://github.com/AgeYY/fast-switch-projects#readme",
 	"repository": {
 		"type": "git",
@@ -1761,10 +1761,10 @@
 		"compile": "gulp build",
 		"watch": "gulp watch",
 		"test": "node test/index.js",
-		"update": "rm -rf node_modules && rm package-lock.json && npm install",
 		"check-lint-rules": "node ./plugins/check-lint-rules"
 	},
 	"devDependencies": {
+		"@rollup/plugin-node-resolve": "^9.0.0",
 		"@rollup/plugin-typescript": "^8.2.1",
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^8.2.2",
@@ -1780,12 +1780,10 @@
 		"eslint-plugin-l13": "file:plugins/eslint-plugin-l13",
 		"glob": "^7.1.7",
 		"gulp": "^4.0.2",
+		"jsonc-parser": "^3.0.0",
 		"mocha": "^8.4.0",
 		"rollup": "^2.47.0",
 		"typescript": "^4.2.4",
 		"vscode-test": "^1.0.2"
-	},
-	"dependencies": {
-		"jsonc-parser": "^3.0.0"
 	}
 }

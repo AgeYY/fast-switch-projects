@@ -4,7 +4,7 @@ Switching between projects in VS Code is not easy. The [Projects extension](http
 
 Fast Switch Projects builds on Projects with ordered project slots and faster switching. It keeps each project open in its own VS Code window, then switches focus between those windows—avoiding unnecessary workspace reloads. Projects can be reordered by dragging them in the Slots view.
 
-![Reordering project slots and switching between VS Code windows with Fast Switch Projects](images/previews/fast-switch-projects-demo.gif)
+![Reordering project slots and switching between VS Code windows with Fast Switch Projects](https://raw.githubusercontent.com/AgeYY/fast-switch-projects/main/images/previews/fast-switch-projects-demo.gif)
 
 ## Features
 
@@ -101,4 +101,4 @@ Report Fast Switch Projects issues at [AgeYY/fast-switch-projects](https://githu
 
 Fast Switch Projects is independently maintained and is based on the open-source [Projects extension by L13|RARY](https://github.com/L13/vscode-projects). It is not affiliated with or endorsed by the original author.
 
-The original work is copyright © 2019–2023 L13|RARY. Subsequent modifications are copyright © 2026 AgeYY. See [LICENSE.md](LICENSE.md) for the software license and [LICENSE-ICONS.md](LICENSE-ICONS.md) for third-party icon notices.
+The original work is copyright © 2019–2023 L13|RARY. Subsequent modifications are copyright © 2026 AgeYY. See the bundled `LICENSE` file for the software license and [LICENSE-ICONS.md](LICENSE-ICONS.md) for third-party icon notices.

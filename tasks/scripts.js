@@ -4,6 +4,7 @@ const glob = require('glob');
 const { ESLint } = require('eslint');
 const rollup = require('rollup');
 
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const typescript = require('@rollup/plugin-typescript');
 
 //	Variables __________________________________________________________________
@@ -45,7 +46,6 @@ module.exports = [
 				],
 				external: [
 					'fs',
-					'jsonc-parser',
 					'path',
 					'vscode',
 				],
@@ -130,6 +130,9 @@ function build (config) {
 		onwarn,
 		external,
 		plugins: [
+			nodeResolve({
+				preferBuiltins: true,
+			}),
 			typescript({
 				include: config.include,
 			}),

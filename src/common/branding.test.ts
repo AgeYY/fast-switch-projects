@@ -39,7 +39,7 @@ describe('public branding', () => {
 
 	it('keeps the original software notice and public fork credit', () => {
 
-		const license = fs.readFileSync(path.resolve(root, 'LICENSE.md'), 'utf-8');
+		const license = fs.readFileSync(path.resolve(root, 'LICENSE'), 'utf-8');
 		const readme = fs.readFileSync(path.resolve(root, 'README.md'), 'utf-8');
 
 		assert.ok(license.includes('Copyright (c) 2019 - 2023 L13|RARY'));
@@ -54,9 +54,10 @@ describe('public branding', () => {
 		const readme = fs.readFileSync(path.resolve(root, 'README.md'), 'utf-8');
 		const vscodeignore = fs.readFileSync(path.resolve(root, '.vscodeignore'), 'utf-8');
 		const demoPath = 'images/previews/fast-switch-projects-demo.gif';
+		const demoUrl = 'https://raw.githubusercontent.com/AgeYY/fast-switch-projects/main/images/previews/fast-switch-projects-demo.gif';
 		const demo = fs.statSync(path.resolve(root, demoPath));
 
-		assert.ok(readme.includes(`](${demoPath})`));
+		assert.ok(readme.includes(`](${demoUrl})`));
 		assert.strictEqual((readme.match(/!\[/g) || []).length, 1);
 		assert.ok(demo.isFile());
 		assert.ok(demo.size < 1024 * 1024);
