@@ -19,7 +19,7 @@ describe('public branding', () => {
 		assert.strictEqual(manifest.name, 'fast-switch-projects');
 		assert.strictEqual(manifest.displayName, 'Fast Switch Projects');
 		assert.strictEqual(manifest.version, '1.0.0');
-		assert.strictEqual(manifest.publisher, 'zeyuan');
+		assert.strictEqual(manifest.publisher, 'ZeyuanYe');
 		assert.strictEqual(manifest.repository.url, 'https://github.com/AgeYY/fast-switch-projects.git');
 		assert.strictEqual(manifest.bugs.url, 'https://github.com/AgeYY/fast-switch-projects/issues');
 
@@ -49,11 +49,18 @@ describe('public branding', () => {
 
 	});
 
-	it('uses a text-only Marketplace README', () => {
+	it('uses the approved repository-hosted Marketplace demo', () => {
 
 		const readme = fs.readFileSync(path.resolve(root, 'README.md'), 'utf-8');
+		const vscodeignore = fs.readFileSync(path.resolve(root, '.vscodeignore'), 'utf-8');
+		const demoPath = 'images/previews/fast-switch-projects-demo.gif';
+		const demo = fs.statSync(path.resolve(root, demoPath));
 
-		assert.ok(!/!\[[^\]]*\]\([^)]+\)/.test(readme));
+		assert.ok(readme.includes(`](${demoPath})`));
+		assert.strictEqual((readme.match(/!\[/g) || []).length, 1);
+		assert.ok(demo.isFile());
+		assert.ok(demo.size < 1024 * 1024);
+		assert.ok(vscodeignore.split(/\r?\n/).includes('images/previews/**'));
 
 	});
 

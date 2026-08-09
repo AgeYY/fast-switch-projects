@@ -1,6 +1,6 @@
 # Fast Switch Projects
 
-Switching between projects in VS Code is not easy. The nice Projects extension (https://github.com/L13/vscode-projects) provides a convenient way to organize and open projects, but switching projects require reloading the current window which can be slow.
+Switching between projects in VS Code is not easy. The [Projects extension](https://github.com/L13/vscode-projects) provides a convenient way to organize and open projects, but switching projects requires reloading the current window, which can be slow.
 
 Fast Switch Projects builds on Projects with ordered project slots and faster switching. It keeps each project open in its own VS Code window, then switches focus between those windows—avoiding unnecessary workspace reloads. Projects can be reordered by dragging them in the Slots view.
 
@@ -20,13 +20,13 @@ Fast Switch Projects builds on Projects with ordered project slots and faster sw
 
 ## Installation
 
-After the public release, search for **Fast Switch Projects** in the VS Code Extensions view or install it by identifier:
+Search for **Fast Switch Projects** in the VS Code Extensions view or install it by identifier:
 
 ```text
-zeyuan.fast-switch-projects
+ZeyuanYe.fast-switch-projects
 ```
 
-For a preview build, run **Extensions: Install from VSIX...** and select the packaged `fast-switch-projects-1.0.0.vsix` file.
+For manual installation, run **Extensions: Install from VSIX...** and select the packaged `fast-switch-projects-1.0.0.vsix` file.
 
 Fast Switch Projects has its own extension, command, view, and setting identifiers. It can be installed independently from Projects by L13. The extensions retain overlapping default keyboard shortcuts, so disable or reassign one set of shortcuts if both extensions are enabled.
 
@@ -95,7 +95,7 @@ See [GUIDE.md](GUIDE.md) for detailed behavior and build instructions.
 
 ## Support
 
-Report Fast Switch Projects issues at [AgeYY/fast-switch-projects](https://github.com/AgeYY/fast-switch-projects/issues) after the repository is made public.
+Report Fast Switch Projects issues at [AgeYY/fast-switch-projects](https://github.com/AgeYY/fast-switch-projects/issues).
 
 ## Credits and license
 

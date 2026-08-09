@@ -64,7 +64,7 @@ The generated VSIX is intentionally ignored by Git.
 
 ## Development-build migration
 
-The development extension `zeyuan.ordered-projects` and public extension `zeyuan.fast-switch-projects` have separate VS Code storage. To migrate:
+The development extension `zeyuan.ordered-projects` and public extension `ZeyuanYe.fast-switch-projects` have separate VS Code storage. To migrate:
 
 1. Run **Ordered Projects: Export Data...** in the development build.
 2. Install Fast Switch Projects.

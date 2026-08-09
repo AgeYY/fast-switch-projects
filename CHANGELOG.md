@@ -2,7 +2,7 @@
 
 All notable changes to Fast Switch Projects are documented in this file.
 
-## [1.0.0] - Unreleased
+## [1.0.0] - 2026-08-08
 
 ### Added
 
