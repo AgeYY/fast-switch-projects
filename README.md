@@ -4,7 +4,7 @@ Switching between projects in VS Code is not easy. The [Projects extension](http
 
 Fast Switch Projects builds on Projects with ordered project slots and faster switching. It keeps each project open in its own VS Code window, then switches focus between those windows—avoiding unnecessary workspace reloads. Projects can be reordered by dragging them in the Slots view.
 
-![Reordering project slots and switching between VS Code windows with Fast Switch Projects](https://raw.githubusercontent.com/AgeYY/fast-switch-projects/main/images/previews/fast-switch-projects-demo.gif)
+![Fast Switch Projects with ordered slots, a green current-project arrow, and a simplified Git graph showing BASE, HEAD, a merge, and an important branch](images/previews/fast-switch-projects-slots-graph.png)
 
 ## Features
 
@@ -100,6 +100,8 @@ Click **Simple** to switch to **Full** commit history, or **Full** to simplify i
 Branch labels use distinct, softened colors that persist across refreshes and reloads. Matching local and remote labels share a color.
 
 Right-click a branch label (including BASE) and choose **Important**, **Normal**, or **Archived**. Important branches get a star and outline; archived labels fade. Local and remote labels of the same branch share a priority.
+
+![Branch context menu with Important selected and Normal and Archived options](images/previews/fast-switch-projects-branch-importance.png)
 
 Use **All priorities**, **Hide archived**, or **Important only** above the graph. Filters operate on the loaded history and preserve the current branch, base branch, and connecting ancestry, including merges. Select All priorities to restore hidden labels or change an archived branch back to Normal.
 
