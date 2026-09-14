@@ -15,6 +15,7 @@ import {
 	insertSlot,
 	moveSlot,
 	removeSlotAndClose,
+	resolveCurrentWorkspaceSlot,
 } from './slots';
 
 //	Variables __________________________________________________________________
@@ -337,6 +338,70 @@ describe('slots', () => {
 			slots[1] = workspace('Other', 1);
 
 			assert.strictEqual(findCurrentWorkspaceSlot(slots, '/projects/Current', 1), 0);
+
+		});
+
+	});
+
+	describe(`.${resolveCurrentWorkspaceSlot.name}()`, () => {
+
+		function resolvePath (path: string) {
+
+			return Promise.resolve(path.startsWith('/') ? `vscode-remote://ssh-remote+current${path}` : path);
+
+		}
+
+		it('matches a saved remote slot against the workspace host path', async () => {
+
+			const slots: Slot[] = [];
+			slots[2] = { ...workspace('Current', 2), path: 'vscode-remote://ssh-remote+current/projects/Current' };
+			assert.strictEqual(await resolveCurrentWorkspaceSlot(slots, '/projects/Current', 0, resolvePath), 2);
+
+		});
+
+		it('keeps identical paths on different remote machines distinct', async () => {
+
+			const slots: Slot[] = [];
+			slots[2] = { ...workspace('Current', 2), path: 'vscode-remote://ssh-remote+other/projects/Current' };
+			assert.strictEqual(await resolveCurrentWorkspaceSlot(slots, '/projects/Current', 2, resolvePath), 0);
+
+		});
+
+		it('preserves the preferred matching group after resolving remote paths', async () => {
+
+			const slots: Slot[] = [];
+			const paths = ['vscode-remote://ssh-remote+current/projects/Current'];
+			slots[2] = { ...group('First', 2), paths };
+			slots[6] = { ...group('Second', 6), paths };
+			assert.strictEqual(await resolveCurrentWorkspaceSlot(slots, '/projects/Current', 6, resolvePath), 6);
+
+		});
+
+		it('does not mark a slot when URI resolution fails', async () => {
+
+			const slots: Slot[] = [];
+			slots[1] = workspace('Other', 1);
+			function fail (): Promise<string> {
+
+				return Promise.reject(new Error('Unavailable resolver'));
+
+			}
+			assert.strictEqual(await resolveCurrentWorkspaceSlot(slots, '/projects/Current', 1, fail), 0);
+			assert.strictEqual(await resolveCurrentWorkspaceSlot(slots, '/projects/Other', 1, fail), 1);
+
+		});
+
+		it('ignores an unresolvable slot while finding a valid match', async () => {
+
+			const slots: Slot[] = [];
+			slots[1] = workspace('Unavailable', 1);
+			slots[3] = { ...workspace('Current', 3), path: 'vscode-remote://ssh-remote+current/projects/Current' };
+			assert.strictEqual(await resolveCurrentWorkspaceSlot(slots, '/projects/Current', 1, async (path) => {
+
+				if (path.endsWith('/Unavailable')) throw new Error('Unavailable resolver');
+				return resolvePath(path);
+
+			}), 3);
 
 		});
 

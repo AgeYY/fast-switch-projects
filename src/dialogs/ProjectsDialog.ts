@@ -11,11 +11,11 @@ import * as files from '../common/files';
 import { openNewProjectsInNewWindows } from '../common/newProjectWindows';
 import { organizeNewProject } from '../common/projectOrganizer';
 import * as settings from '../common/settings';
+import { getPath } from '../common/uris';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
 import type { HotkeySlotsState } from '../states/HotkeySlotsState';
 import type { ProjectsState } from '../states/ProjectsState';
-import type { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 
@@ -31,14 +31,13 @@ export class ProjectsDialog {
 	
 	private static current: ProjectsDialog = null;
 	
-	public static create (projectsState: ProjectsState, hotkeySlotsState: HotkeySlotsState, workspaceGroupsState: WorkspaceGroupsState) {
+	public static create (projectsState: ProjectsState, hotkeySlotsState: HotkeySlotsState) {
 		
-		return ProjectsDialog.current || (ProjectsDialog.current = new ProjectsDialog(projectsState, hotkeySlotsState, workspaceGroupsState));
+		return ProjectsDialog.current || (ProjectsDialog.current = new ProjectsDialog(projectsState, hotkeySlotsState));
 		
 	}
 	
-	private constructor (private readonly projectsState: ProjectsState, private readonly hotkeySlotsState: HotkeySlotsState,
-		private readonly workspaceGroupsState: WorkspaceGroupsState) {}
+	private constructor (private readonly projectsState: ProjectsState, private readonly hotkeySlotsState: HotkeySlotsState) {}
 	
 	public async addDirectory () {
 		
@@ -68,7 +67,7 @@ export class ProjectsDialog {
 			const existingProject = this.projectsState.getByPath(path);
 			
 			if (existingProject) {
-				vscode.window.showInformationMessage(`Project "${existingProject.label}" exists!`);
+				this.organize(existingProject);
 				return;
 			}
 			
@@ -128,8 +127,12 @@ export class ProjectsDialog {
 
 	private async addAllAndOpen (uris: vscode.Uri[]) {
 
-		const projects = this.projectsState.addAll(uris);
-		projects?.forEach((project) => this.organize(project));
+		this.projectsState.addAll(uris);
+		const projects: Project[] = [];
+		for (const uri of uris) {
+			const project = this.projectsState.getByPath(getPath(uri));
+			if (project && this.organize(project)?.added) projects.push(project);
+		}
 
 		try {
 			await openNewProjectsInNewWindows(projects, settings.openNewProjectsInNewWindow(), files.open, () => this.projectsState.persistPendingState());
@@ -143,9 +146,8 @@ export class ProjectsDialog {
 
 		if (!project) return;
 
-		organizeNewProject(project, {
+		return organizeNewProject(project, {
 			hotkeySlots: this.hotkeySlotsState,
-			workspaceGroups: this.workspaceGroupsState,
 		});
 
 	}

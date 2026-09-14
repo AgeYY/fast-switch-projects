@@ -1,128 +1,77 @@
-//	Imports ____________________________________________________________________
-
 import * as assert from 'assert';
-
 import type { Slot } from '../@types/hotkeys';
-import type { Project, WorkspaceGroup } from '../@types/workspaces';
-
-import {
-	DEFAULT_WORKSPACE_GROUP_LABEL,
-	organizeNewProject,
-	ProjectOrganizerStates,
-} from './projectOrganizer';
-
-//	Variables __________________________________________________________________
-
-
-
-//	Initialize _________________________________________________________________
+import type { Project } from '../@types/workspaces';
+import { organizeNewProject, ProjectOrganizerStates } from './projectOrganizer';
+import { removeSlotAndClose } from './slots';
 
 describe('projectOrganizer', () => {
 
-	it('assigns a new project to the first custom group and the slot after the last occupied slot', () => {
+	it('appends after existing slots without overwriting or renumbering them', () => {
 
-		const groups = [group('Alpha', 1), group('Zeta', 2)];
 		const slots: Slot[] = [];
-		slots[2] = slot('Existing', 2);
-		slots[8] = slot('Last', 8);
-		const states = createStates(groups, slots);
-		const project = workspace('New');
-
-		const result = organizeNewProject(project, states);
-
-		assert.strictEqual(result.group, groups[0]);
-		assert.strictEqual(result.slotIndex, 9);
-		assert.deepStrictEqual(groups[0].paths, [project.path]);
-		assert.strictEqual(groups[1].paths.length, 0);
-		assert.strictEqual(slots[9].path, project.path);
+		slots[2] = { index: 2, label: 'Existing', path: '/projects/Existing' };
+		slots[8] = { index: 8, label: 'Last', path: '/projects/Last' };
+		const result = organizeNewProject(project('New'), states(slots));
+		assert.deepStrictEqual(result, { slotIndex: 9, added: true });
+		assert.strictEqual(slots[2].label, 'Existing');
+		assert.strictEqual(slots[8].label, 'Last');
+		assert.strictEqual(slots[9].path, '/projects/New');
 
 	});
+	it('starts at slot one and appends in selection order', () => {
 
-	it('creates the Projects group when no custom group exists', () => {
-
-		const groups: WorkspaceGroup[] = [];
 		const slots: Slot[] = [];
-		const states = createStates(groups, slots);
-
-		const result = organizeNewProject(workspace('First'), states);
-
-		assert.strictEqual(groups.length, 1);
-		assert.strictEqual(groups[0].label, DEFAULT_WORKSPACE_GROUP_LABEL);
-		assert.strictEqual(result.group, groups[0]);
-		assert.strictEqual(result.slotIndex, 1);
-		assert.strictEqual(slots[1].label, 'First');
+		['One', 'Two', 'Three'].forEach((label) => organizeNewProject(project(label), states(slots)));
+		assert.deepStrictEqual(slots.slice(1).filter(Boolean).map((slot) => slot.label), ['One', 'Two', 'Three']);
 
 	});
+	it('does not duplicate or move a project that is already in a slot', () => {
 
-	it('assigns several newly added projects consecutive slots in event order', () => {
-
-		const groups = [group('Main', 1)];
 		const slots: Slot[] = [];
-		const states = createStates(groups, slots);
+		['One', 'Two'].forEach((label) => organizeNewProject(project(label), states(slots)));
+		const before = JSON.stringify(slots);
+		assert.deepStrictEqual(organizeNewProject(project('One'), states(slots)), { slotIndex: 1, added: false });
+		assert.strictEqual(JSON.stringify(slots), before);
 
-		['One', 'Two', 'Three'].forEach((label) => organizeNewProject(workspace(label), states));
+	});
+	it('re-adds a removed project at the end with contiguous numbering', () => {
 
-		assert.deepStrictEqual(slots.slice(1, 4).map((item) => item.label), ['One', 'Two', 'Three']);
-		assert.deepStrictEqual(groups[0].paths, ['/projects/One', '/projects/Two', '/projects/Three']);
+		let slots: Slot[] = [];
+		['One', 'Two', 'Three'].forEach((label) => organizeNewProject(project(label), states(slots)));
+		slots = removeSlotAndClose(slots, 2).slots;
+		assert.deepStrictEqual(slots.slice(1).filter(Boolean).map((slot) => slot.label), ['One', 'Three']);
+		organizeNewProject(project('Two'), states(slots));
+		assert.deepStrictEqual(slots.slice(1).filter(Boolean).map((slot) => [slot.index, slot.label]), [[1, 'One'], [2, 'Three'], [3, 'Two']]);
+
+	});
+	it('supports workspace files, remote URIs, and existing group or tag slots', () => {
+
+		const slots: Slot[] = [undefined, { index: 1, label: 'Group', groupId: 1, paths: ['/projects/One'] }];
+		const remote = { ...project('Remote'), path: 'vscode-remote://ssh-remote+server/home/me/project' };
+		const file = { ...project('Workspace'), path: '/projects/example.code-workspace' };
+		organizeNewProject(remote, states(slots));
+		organizeNewProject(file, states(slots));
+		assert.strictEqual(slots[1].groupId, 1);
+		assert.strictEqual(slots[2].path, remote.path);
+		assert.strictEqual(slots[3].path, file.path);
 
 	});
 
 });
+function states (slots: Slot[]): ProjectOrganizerStates {
 
-//	Exports ____________________________________________________________________
+	return { hotkeySlots: {
+		get: () => slots,
+		assign: (selectedProject, index) => {
 
+			slots[index] = { index, label: selectedProject.label, path: selectedProject.path };
 
-
-//	Functions __________________________________________________________________
-
-function createStates (groups: WorkspaceGroup[], slots: Slot[]): ProjectOrganizerStates {
-
-	return {
-		hotkeySlots: {
-			assign: (project, index) => slots[index] = {
-				index,
-				label: project.label,
-				path: project.path,
-			},
-			get: () => slots,
 		},
-		workspaceGroups: {
-			add: (label) => {
-
-				const newGroup = group(label, groups.length + 1);
-
-				groups.push(newGroup);
-
-				return newGroup;
-
-			},
-			addWorkspace: (project, selectedGroup) => selectedGroup.paths.push(project.path),
-			get: () => groups,
-		},
-	};
+	} };
 
 }
+function project (label: string): Project {
 
-function workspace (label: string): Project {
-
-	return {
-		label,
-		path: `/projects/${label}`,
-		remote: false,
-		root: '/projects',
-		type: 'folder',
-	};
-
-}
-
-function group (label: string, id: number): WorkspaceGroup {
-
-	return { collapsed: false, id, label, paths: [] };
-
-}
-
-function slot (label: string, index: number): Slot {
-
-	return { index, label, path: `/projects/${label}` };
+	return { label, path: `/projects/${label}`, remote: false, root: '/projects', type: 'folder' };
 
 }

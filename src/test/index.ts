@@ -19,10 +19,8 @@ const files = glob.sync('**/*.test.js', {
 
 files.forEach((file) => mocha.addFile(path.resolve(__dirname, file)));
 
-mocha.run(() => {
-	
-	//
-	
+mocha.run((failures) => {
+	process.exitCode = failures ? 1 : 0;
 });
 
 //	Exports ____________________________________________________________________

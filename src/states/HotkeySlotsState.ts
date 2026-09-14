@@ -13,9 +13,11 @@ import {
 	insertSlot,
 	moveSlot,
 	removeSlotAndClose,
+	resolveCurrentWorkspaceSlot,
 } from '../common/slots';
 import * as states from '../common/states';
 import { reloadSharedState } from '../common/stateSync';
+import { createUri } from '../common/uris';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
 //	Variables __________________________________________________________________
@@ -73,6 +75,13 @@ export class HotkeySlotsState {
 	public getCurrentWorkspaceIndex () {
 
 		return findCurrentWorkspaceSlot(this.slots, getCurrentWorkspacePath(), states.getLastOpenedSlot(this.context));
+
+	}
+
+	public async resolveCurrentWorkspaceIndex () {
+
+		return resolveCurrentWorkspaceSlot(this.slots, getCurrentWorkspacePath(), states.getLastOpenedSlot(this.context),
+			async (path) => (await vscode.env.asExternalUri(createUri(path))).toString());
 
 	}
 

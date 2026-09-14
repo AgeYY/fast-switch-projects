@@ -7,6 +7,7 @@ import * as files from '../common/files';
 import {
 	findAdjacentOccupiedSlot,
 	findFirstOccupiedSlot,
+	findSlotIndex,
 	findLastOccupiedSlot,
 } from '../common/slots';
 
@@ -54,6 +55,11 @@ export function activate (context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(slotsTreeView);
 	context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(() => slotsProvider.refresh()));
+	context.subscriptions.push(vscode.window.onDidChangeWindowState((window) => {
+
+		if (window.focused) slotsProvider.refresh();
+
+	}));
 	
 	context.subscriptions.push(hotkeySlotsState.onDidChangeSlots(() => {
 		
@@ -73,6 +79,23 @@ export function activate (context: vscode.ExtensionContext) {
 		'fastSwitchProjects.action.workspace.insertSlot': ({ project }) => hotkeySlotsDialog.insertWorkspace(project),
 		'fastSwitchProjects.action.group.insertSlot': ({ group }) => hotkeySlotsDialog.insertGroup(group),
 		'fastSwitchProjects.action.tag.insertSlot': ({ tag }) => hotkeySlotsDialog.insertTag(tag),
+
+		'fastSwitchProjects.action.slots.removeProject': async (item?: SlotTreeItem) => {
+
+			const initialSlots = hotkeySlotsState.get().slice();
+			const pickedIndex = item?.index || (await hotkeySlotsDialog.selectAssignedSlot('Select the project to remove from Slots.'))?.index;
+			const selected = item?.slot || initialSlots[pickedIndex];
+			if (!selected) return;
+			const index = findSlotIndex(hotkeySlotsState.get(), selected);
+			if (!index) return;
+			const result = hotkeySlotsState.removeAndClose(index);
+			if (result.changed && selected.path) {
+				const project = projectsState.getByPath(selected.path);
+				if (project) projectsState.remove(project);
+			}
+			await projectsState.persistPendingState();
+
+		},
 
 		'fastSwitchProjects.action.hotkeys.insertSlot': (item?: SlotTreeItem) => hotkeySlotsDialog.insertExisting(item?.index),
 		'fastSwitchProjects.action.hotkeys.moveSlotUp': (item?: SlotTreeItem) => hotkeySlotsDialog.move(-1, item?.index),

@@ -37,11 +37,11 @@ export class SlotsProvider implements vscode.TreeDataProvider<SlotTreeItem> {
 
 	}
 
-	public getChildren () {
+	public async getChildren () {
 
 		const items: SlotTreeItem[] = [];
 		const slots = this.slotsState.get();
-		const currentIndex = this.slotsState.getCurrentWorkspaceIndex();
+		const currentIndex = await this.slotsState.resolveCurrentWorkspaceIndex();
 
 		for (const index of getOccupiedSlotIndexes(slots)) {
 			items.push(new SlotTreeItem(index, slots[index], index === currentIndex));

@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import { formatAmount } from '../@l13/formats';
 import { pluralEntries } from '../@l13/units/files';
 
-import type { GroupTreeItems, Project } from '../@types/workspaces';
+import type { Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
@@ -71,7 +71,7 @@ export function activate (context: vscode.ExtensionContext) {
 	const workspaceGroupsState = WorkspaceGroupsState.create(context);
 	const workspacesState = WorkspacesState.create(context);
 	
-	const projectsDialog = ProjectsDialog.create(projectsState, hotkeySlotsState, workspaceGroupsState);
+	const projectsDialog = ProjectsDialog.create(projectsState, hotkeySlotsState);
 	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState, workspaceGroupsState);
 	const tagsDialog = TagsDialog.create(tagsState, workspacesState, projectsState);
 	const workspaceGroupsDialog = WorkspaceGroupsDialog.create(workspaceGroupsState, favoriteGroupsState);
@@ -98,36 +98,6 @@ export function activate (context: vscode.ExtensionContext) {
 	workspacesProvider.addWorkspacesSorter(categorySorter);
 	workspacesProvider.addWorkspacesSorter(rootSorter);
 	workspacesProvider.addWorkspacesSorter(typeSorter);
-	
-	const treeView = vscode.window.createTreeView('fastSwitchProjectsWorkspaces', {
-		showCollapseAll: true,
-		treeDataProvider: workspacesProvider,
-	});
-	
-//	Tree View
-	
-	subscriptions.push(treeView);
-	
-	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
-		
-		(<GroupTreeItems>element).saveGroupState(workspaceGroupsState, true);
-		
-	}));
-	
-	subscriptions.push(treeView.onDidExpandElement(({ element }) => {
-		
-		(<GroupTreeItems>element).saveGroupState(workspaceGroupsState, false);
-		
-	}));
-	
-	subscriptions.push(treeView.onDidChangeSelection((event) => {
-		
-		if (workspacesProvider.colorPickerProject && event.selection[0] !== workspacesProvider.colorPickerTreeItem) {
-			workspacesProvider.colorPickerProject = null;
-			workspacesProvider.refresh();
-		}
-		
-	}));
 	
 //	Workspaces Provider
 		
@@ -333,7 +303,7 @@ export function activate (context: vscode.ExtensionContext) {
 		'fastSwitchProjects.action.workspaces.refresh': () => {
 			
 			vscode.window.withProgress({
-				location: { viewId: 'fastSwitchProjectsWorkspaces' },
+				location: vscode.ProgressLocation.Window,
 			}, async () => {
 				
 				await updateProjectsAndFavorites(statusBarColorState, favoritesState, projectsState);
@@ -365,10 +335,11 @@ export function activate (context: vscode.ExtensionContext) {
 		'fastSwitchProjects.action.project.remove': ({ project }: WorkspaceTreeItem) => projectsDialog.remove(project),
 		'fastSwitchProjects.action.projects.clear': () => projectsDialog.clear(),
 		
-		'fastSwitchProjects.action.colorPicker.selectColor': ({ project }: WorkspaceTreeItem) => {
-			
-			workspacesProvider.showColorPicker(project);
-			treeView.reveal(workspacesProvider.colorPickerTreeItem, { focus: true, select: true });
+		'fastSwitchProjects.action.colorPicker.selectColor': async ({ project }: WorkspaceTreeItem) => {
+
+			const labels = ['Default', 'Purple', 'Blue', 'Green', 'Yellow', 'Orange', 'Red', 'Grey'];
+			const label = await vscode.window.showQuickPick(labels, { placeHolder: 'Select status bar color' });
+			if (label) statusBarColorState.assignProjectColor(project, labels.indexOf(label));
 			
 		},
 		

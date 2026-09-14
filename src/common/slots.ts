@@ -138,6 +138,40 @@ export function findCurrentWorkspaceSlot (slots: Slot[], workspacePath: string, 
 
 }
 
+export async function resolveCurrentWorkspaceSlot (slots: Slot[], workspacePath: string, preferredIndex: number,
+	resolvePath: (path: string) => PromiseLike<string>) {
+
+	const exactIndex = findCurrentWorkspaceSlot(slots, workspacePath, preferredIndex);
+	if (exactIndex || !workspacePath) return exactIndex;
+
+	// Compare opaque client identities; never discard a remote URI's authority.
+	const identities = new Map<string, Promise<string>>();
+	function resolve (path: string) {
+
+		if (!identities.has(path)) {
+			identities.set(path, Promise.resolve().then(() => resolvePath(path)).catch(() => ''));
+		}
+		return identities.get(path);
+
+	}
+	const currentPath = await resolve(workspacePath);
+	if (!currentPath) return 0;
+
+	const resolvedSlots = await Promise.all(slots.map(async (slot) => {
+
+		if (!slot) return slot;
+		return {
+			...slot,
+			path: slot.path ? await resolve(slot.path) : undefined,
+			paths: slot.paths ? await Promise.all(slot.paths.map(resolve)) : undefined,
+		};
+
+	}));
+
+	return findCurrentWorkspaceSlot(resolvedSlots, currentPath, preferredIndex);
+
+}
+
 export function findSlotIndex (slots: Slot[], selectedSlot: Slot) {
 
 	for (let i = FIRST_SLOT; i < slots.length; i++) {

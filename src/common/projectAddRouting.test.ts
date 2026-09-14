@@ -20,7 +20,8 @@ describe('project add routing', () => {
 		const addAllAndOpenSource = getMethodSource(projectsDialogSource, 'addAllAndOpen', 'organize');
 
 		assert.ok(saveSource.includes('this.organize(this.projectsState.add(path, label))'));
-		assert.ok(addAllAndOpenSource.includes('projects?.forEach((project) => this.organize(project))'));
+		assert.ok(addAllAndOpenSource.includes('this.organize(project)?.added'));
+		assert.ok(addAllAndOpenSource.includes('this.projectsState.getByPath(getPath(uri))'));
 
 	});
 

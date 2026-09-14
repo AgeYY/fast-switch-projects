@@ -18,7 +18,7 @@ describe('public branding', () => {
 
 		assert.strictEqual(manifest.name, 'fast-switch-projects');
 		assert.strictEqual(manifest.displayName, 'Fast Switch Projects');
-		assert.strictEqual(manifest.version, '1.0.0');
+		assert.strictEqual(manifest.version, '1.5.0');
 		assert.strictEqual(manifest.publisher, 'ZeyuanYe');
 		assert.strictEqual(manifest.repository.url, 'https://github.com/AgeYY/fast-switch-projects.git');
 		assert.strictEqual(manifest.bugs.url, 'https://github.com/AgeYY/fast-switch-projects/issues');
@@ -37,13 +37,13 @@ describe('public branding', () => {
 
 	});
 
-	it('shows only Slots and Workspaces in the activity view', () => {
+	it('shows only Slots and Graph in the activity view', () => {
 
 		const views = <Array<{ id: string }>>manifest.contributes.views.fastSwitchProjects;
 
 		assert.deepStrictEqual(views.map(({ id }) => id), [
 			'fastSwitchProjectsSlots',
-			'fastSwitchProjectsWorkspaces',
+			'fastSwitchProjectsGraph',
 		]);
 
 	});

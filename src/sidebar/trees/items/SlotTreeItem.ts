@@ -65,6 +65,8 @@ function getSlotType (slot: Slot) {
 
 function getDescription (slot: Slot, isCurrent: boolean) {
 
+	if (slot.path) return isCurrent ? 'Current Workspace' : '';
+
 	const type = getSlotType(slot);
 
 	return isCurrent ? `Current Workspace • ${type}` : type;

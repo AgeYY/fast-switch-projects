@@ -14,3 +14,8 @@ gulpfile.js
 tsconfig.json
 **/*.map
 **/*.ts
+
+notes
+notes/**
+data
+data/**

@@ -9,6 +9,7 @@ import * as diff from './commands/diff';
 import * as favorites from './commands/favorites';
 import * as hotkeys from './commands/hotkeys';
 import * as output from './commands/output';
+import * as graph from './graph/GraphProvider';
 import * as tags from './commands/tags';
 import * as workspaces from './commands/workspaces';
 
@@ -30,6 +31,7 @@ export function activate (context: vscode.ExtensionContext) {
 	favorites.activate(context);
 	hotkeys.activate(context);
 	output.activate(context);
+	graph.activate(context);
 	tags.activate(context);
 	workspaces.activate(context);
 	
