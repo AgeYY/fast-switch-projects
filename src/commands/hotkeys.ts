@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
+import { ManagedWorkspaces } from '../common/managedWorkspaces';
 import {
 	findAdjacentOccupiedSlot,
 	findFirstOccupiedSlot,
@@ -12,6 +13,7 @@ import {
 } from '../common/slots';
 
 import { HotkeySlotsDialog } from '../dialogs/HotkeySlotsDialog';
+import { SlotProjectsDialog } from '../dialogs/SlotProjectsDialog';
 import { TagsDialog } from '../dialogs/TagsDialog';
 
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
@@ -25,6 +27,8 @@ import { HotkeySlotsState } from '../states/HotkeySlotsState';
 import { ProjectsState } from '../states/ProjectsState';
 import { TagsState } from '../states/TagsState';
 import { WorkspacesState } from '../states/WorkspacesState';
+
+import { openListedProjects } from './openListedProjects';
 
 //	Variables __________________________________________________________________
 
@@ -46,6 +50,9 @@ export function activate (context: vscode.ExtensionContext) {
 	
 	const tagsDialog = TagsDialog.create(tagsState, workspacesState, projectsState);
 	const hotkeySlotsDialog = HotkeySlotsDialog.create(hotkeySlotsState);
+	const managedWorkspaces = new ManagedWorkspaces(context.globalStorageUri);
+	const openProject = (path: string) => files.open(path, managedWorkspaces.owns(path) ? true : undefined);
+	const slotProjectsDialog = new SlotProjectsDialog(context.globalStorageUri, projectsState, hotkeySlotsState);
 	const slotsProvider = new SlotsProvider(hotkeySlotsState);
 	const slotsDragAndDropController = new SlotsDragAndDropController(hotkeySlotsState);
 	const slotsTreeView = vscode.window.createTreeView('fastSwitchProjectsSlots', {
@@ -73,6 +80,10 @@ export function activate (context: vscode.ExtensionContext) {
 	hotkeySlotsState.saveCurrentWorkspace();
 	
 	commands.register(context, {
+		'fastSwitchProjects.action.slots.openAllListedProjects': () => openListedProjects(hotkeySlotsState, tagsState),
+		'fastSwitchProjects.action.slots.openAndRegisterAllListedProjects': () => openListedProjects(hotkeySlotsState, tagsState, true),
+		'fastSwitchProjects.action.slots.duplicateProject': (item?: SlotTreeItem) => slotProjectsDialog.duplicate(item),
+		'fastSwitchProjects.action.slots.renameProject': (item?: SlotTreeItem) => slotProjectsDialog.rename(item),
 		'fastSwitchProjects.action.workspace.assignSlot': ({ project }) => hotkeySlotsDialog.assignWorkspace(project),
 		'fastSwitchProjects.action.group.assignSlot': ({ group }) => hotkeySlotsDialog.assignGroup(group),
 		'fastSwitchProjects.action.tag.assignSlot': ({ tag }) => hotkeySlotsDialog.assignTag(tag),
@@ -82,6 +93,7 @@ export function activate (context: vscode.ExtensionContext) {
 
 		'fastSwitchProjects.action.slots.removeProject': async (item?: SlotTreeItem) => {
 
+			hotkeySlotsState.refresh();
 			const initialSlots = hotkeySlotsState.get().slice();
 			const pickedIndex = item?.index || (await hotkeySlotsDialog.selectAssignedSlot('Select the project to remove from Slots.'))?.index;
 			const selected = item?.slot || initialSlots[pickedIndex];
@@ -105,29 +117,29 @@ export function activate (context: vscode.ExtensionContext) {
 
 			const index = item?.index || (await hotkeySlotsDialog.selectAssignedSlot())?.index;
 
-			if (index) await openSlot(hotkeySlotsState, tagsState, tagsDialog, index);
+			if (index) await openSlot(hotkeySlotsState, tagsState, tagsDialog, index, openProject);
 
 		},
 		
-		'fastSwitchProjects.action.hotkey.slot1': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 1),
-		'fastSwitchProjects.action.hotkey.slot2': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 2),
-		'fastSwitchProjects.action.hotkey.slot3': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 3),
-		'fastSwitchProjects.action.hotkey.slot4': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 4),
-		'fastSwitchProjects.action.hotkey.slot5': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 5),
-		'fastSwitchProjects.action.hotkey.slot6': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 6),
-		'fastSwitchProjects.action.hotkey.slot7': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 7),
-		'fastSwitchProjects.action.hotkey.slot8': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 8),
-		'fastSwitchProjects.action.hotkey.slot9': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 9),
-		'fastSwitchProjects.action.hotkey.nextSlot': () => navigateSlot(hotkeySlotsState, tagsState, tagsDialog, 'next'),
-		'fastSwitchProjects.action.hotkey.previousSlot': () => navigateSlot(hotkeySlotsState, tagsState, tagsDialog, 'previous'),
-		'fastSwitchProjects.action.hotkey.firstSlot': () => navigateSlot(hotkeySlotsState, tagsState, tagsDialog, 'first'),
-		'fastSwitchProjects.action.hotkey.lastSlot': () => navigateSlot(hotkeySlotsState, tagsState, tagsDialog, 'last'),
+		'fastSwitchProjects.action.hotkey.slot1': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 1, openProject),
+		'fastSwitchProjects.action.hotkey.slot2': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 2, openProject),
+		'fastSwitchProjects.action.hotkey.slot3': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 3, openProject),
+		'fastSwitchProjects.action.hotkey.slot4': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 4, openProject),
+		'fastSwitchProjects.action.hotkey.slot5': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 5, openProject),
+		'fastSwitchProjects.action.hotkey.slot6': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 6, openProject),
+		'fastSwitchProjects.action.hotkey.slot7': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 7, openProject),
+		'fastSwitchProjects.action.hotkey.slot8': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 8, openProject),
+		'fastSwitchProjects.action.hotkey.slot9': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 9, openProject),
+		'fastSwitchProjects.action.hotkey.nextSlot': () => navigateSlot(hotkeySlotsState, tagsState, tagsDialog, 'next', openProject),
+		'fastSwitchProjects.action.hotkey.previousSlot': () => navigateSlot(hotkeySlotsState, tagsState, tagsDialog, 'previous', openProject),
+		'fastSwitchProjects.action.hotkey.firstSlot': () => navigateSlot(hotkeySlotsState, tagsState, tagsDialog, 'first', openProject),
+		'fastSwitchProjects.action.hotkey.lastSlot': () => navigateSlot(hotkeySlotsState, tagsState, tagsDialog, 'last', openProject),
 		
 		'fastSwitchProjects.action.hotkey.previousWorkspace': () => {
 			
 			const previousWorkspace = hotkeySlotsState.getPreviousWorkspace();
 			
-			if (previousWorkspace) files.open(previousWorkspace);
+			if (previousWorkspace) openProject(previousWorkspace);
 			
 		},
 		
@@ -139,7 +151,7 @@ export function activate (context: vscode.ExtensionContext) {
 
 //	Functions __________________________________________________________________
 
-async function openSlot (hotkeySlotsState: HotkeySlotsState, tagsState: TagsState, tagsDialog: TagsDialog, index: number) {
+async function openSlot (hotkeySlotsState: HotkeySlotsState, tagsState: TagsState, tagsDialog: TagsDialog, index: number, openProject: (path: string) => unknown) {
 	
 	const slots = hotkeySlotsState.get();
 	const slot = slots[index];
@@ -148,13 +160,13 @@ async function openSlot (hotkeySlotsState: HotkeySlotsState, tagsState: TagsStat
 		await hotkeySlotsState.rememberOpenedSlot(index);
 		if ('tagId' in slot) tagsDialog.open(tagsState.getById(slot.tagId));
 		else if ('groupId' in slot) files.openAll(slot.paths);
-		else files.open(slot.path);
+		else await openProject(slot.path);
 	}
 	
 }
 
 async function navigateSlot (hotkeySlotsState: HotkeySlotsState, tagsState: TagsState,
-	tagsDialog: TagsDialog, direction: NavigationDirection) {
+	tagsDialog: TagsDialog, direction: NavigationDirection, openProject: (path: string) => unknown) {
 
 	const slots = hotkeySlotsState.get();
 	let index = 0;
@@ -163,7 +175,7 @@ async function navigateSlot (hotkeySlotsState: HotkeySlotsState, tagsState: Tags
 	else if (direction === 'last') index = findLastOccupiedSlot(slots);
 	else index = findAdjacentOccupiedSlot(slots, hotkeySlotsState.getCurrentIndex(), direction === 'next' ? 1 : -1);
 
-	if (index) await openSlot(hotkeySlotsState, tagsState, tagsDialog, index);
+	if (index) await openSlot(hotkeySlotsState, tagsState, tagsDialog, index, openProject);
 	else vscode.window.showInformationMessage('No project slots are assigned.');
 
 }

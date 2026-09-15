@@ -31,6 +31,7 @@ import { SessionsState } from '../states/SessionsState';
 import { TagsState } from '../states/TagsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 import { WorkspacesState } from '../states/WorkspacesState';
+import { StatusBarInfo } from '../statusbar/StatusBarInfo';
 
 //	Variables __________________________________________________________________
 
@@ -77,8 +78,9 @@ export function activate (context: vscode.ExtensionContext) {
 
 		const tags = tagsState.get();
 
-		hotkeySlots.saveCurrentWorkspace();
+		if (vscode.window.state.focused) hotkeySlots.saveCurrentWorkspace();
 		hotkeySlots.refresh();
+		StatusBarInfo.create(context).refresh();
 
 		FavoritesProvider.current?.refresh({
 			favorites: favoritesState.get(),
@@ -122,6 +124,11 @@ export function activate (context: vscode.ExtensionContext) {
 	// A newly opened window can already be focused before this listener is registered.
 	// Retry briefly during activation so state propagated from the creating window is rendered.
 	refreshTimeouts.push(...scheduleCrossWindowRefresh(refreshIfChanged));
+
+	// globalState has no public change event. Also refresh visible background windows,
+	// which may not receive a focus transition after a rename in a sibling window.
+	const refreshInterval = setInterval(refreshIfChanged, 2000);
+	context.subscriptions.push(new vscode.Disposable(() => clearInterval(refreshInterval)));
 	
 	commands.register(context, {
 		'fastSwitchProjects.action.explorer.openInNewWindow': (uri: vscode.Uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),

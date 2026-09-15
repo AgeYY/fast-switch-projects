@@ -1,0 +1,34 @@
+{
+  "name": "fast-switch-projects-windows",
+  "displayName": "Fast Switch Projects for Windows",
+  "description": "Project switching and single visible window mode for local and Remote-SSH workspaces. Includes automatic project engine setup.",
+  "version": "0.2.0",
+  "publisher": "ZeyuanYe",
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": { "vscode": "^1.85.0" },
+  "extensionKind": ["ui"],
+  "api": "none",
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished", "onCommand:fastSwitchProjects.windows.open"],
+  "capabilities": { "untrustedWorkspaces": { "supported": false }, "virtualWorkspaces": false },
+  "contributes": {
+    "commands": [
+      { "command": "fastSwitchProjects.windows.register", "title": "Register This Project Window", "category": "Fast Switch Projects" },
+      { "command": "fastSwitchProjects.windows.unregister", "title": "Unregister This Project Window", "category": "Fast Switch Projects" },
+      { "command": "fastSwitchProjects.windows.showAll", "title": "Show All Project Windows", "category": "Fast Switch Projects" },
+      { "command": "fastSwitchProjects.windows.enable", "title": "Enable Single Visible Window Mode", "category": "Fast Switch Projects" },
+      { "command": "fastSwitchProjects.windows.diagnostics", "title": "Window Mode Diagnostics", "category": "Fast Switch Projects" }
+    ],
+    "configuration": {
+      "title": "Fast Switch Projects Windows",
+      "properties": {
+        "fastSwitchProjects.singleWindow.enabled": {
+          "type": "boolean", "default": false, "scope": "application",
+          "description": "Prototype: hide inactive registered project windows. Turning this off restores all managed windows. Register each of three test projects first."
+        }
+      }
+    }
+  },
+  "scripts": { "build": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File build.ps1", "test": "node --test test/*.test.js" },
+  "repository": { "type": "git", "url": "https://github.com/AgeYY/fast-switch-projects.git" }
+}

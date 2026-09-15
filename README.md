@@ -18,6 +18,7 @@ Fast Switch Projects builds on Projects with ordered project slots and faster sw
 - Reorder slots by dragging rows or using keyboard-friendly move commands.
 - Insert a workspace, group, or tag at any slot without overwriting another assignment.
 - Add projects directly from the Slots header; each project receives the next available slot.
+- Right-click a project to duplicate it into a separate window over the same files, or rename its slot.
 - Remove projects directly from their slot rows and close the numbering gap automatically.
 - Add folders or `.code-workspace` files, with optional automatic opening in separate windows.
 - Synchronize project data and slot changes across open VS Code windows.
@@ -25,35 +26,25 @@ Fast Switch Projects builds on Projects with ordered project slots and faster sw
 
 ## Installation
 
-Search for **Fast Switch Projects** in the VS Code Extensions view or install it by identifier:
+For the Windows prototype, install **one file** locally:
+`fast-switch-projects-windows-0.2.0.vsix`, using **Extensions: Install from VSIX...**.
+The package includes native window management and project engine 1.5.4. It
+sets up that engine automatically for local and Remote-SSH workspaces. Users do
+not need another VSIX, build tools, or a manual server installation. Trust your
+workspaces if prompted, and reload when requested during an upgrade.
 
-```text
-ZeyuanYe.fast-switch-projects
-```
+For Remote-SSH, first install Microsoft's Remote-SSH extension and establish a
+working connection. The bundled project engine runs on the SSH host, while window
+management runs on Windows. No `remote.extensionKind` override is needed. The
+engine can appear separately in Extensions; the Windows package manages its setup.
 
-For the current 1.5.0 development build, follow the [build instructions](GUIDE.md#build-the-preview), then run **Extensions: Install from VSIX...** and select `fast-switch-projects-1.5.0.vsix`. Pushing this repository does not publish a new Marketplace version.
+These prototype builds are not published to the Marketplace. Share the Windows
+VSIX directly. Building it is documented in [GUIDE.md](GUIDE.md#build-the-preview).
+Git pushes and Marketplace publication remain separate steps.
 
-Fast Switch Projects has its own extension, command, view, and setting identifiers. It can be installed independently from Projects by L13. The extensions retain overlapping default keyboard shortcuts, so disable or reassign one set of shortcuts if both extensions are enabled.
-
-### Remote SSH and a new computer
-
-Connect to your remote project and install Fast Switch Projects on the SSH host. In the new computer's **Preferences: Open User Settings (JSON)**, add this entry to `remote.extensionKind`, preserving any existing entries:
-
-```json
-"remote.extensionKind": {
-  "zeyuanye.fast-switch-projects": ["workspace"]
-}
-```
-
-Save and run **Developer: Reload Window**. Set this in the local user settings on each computer; the remote workspace settings do not replace it. If installation reports that the extension is “declared to not run in this setup,” check this setting and retry from the reloaded window.
-
-To install a packaged build from the connected VS Code terminal:
-
-```bash
-code --install-extension /path/to/fast-switch-projects-1.5.0.vsix --force
-```
-
-A long-running tmux session can retain an older VS Code connection. If an installation command still targets the old window after a reload, run it in a newly opened integrated terminal outside that tmux session.
+Fast Switch Projects has its own extension, command, view, and setting identifiers.
+It can be installed independently from Projects by L13. The extensions retain
+some overlapping default shortcuts; configure those if using both.
 
 ## Quick start
 
@@ -65,6 +56,20 @@ A long-running tmux session can retain an older VS Code connection. If an instal
 The Slots header's **…** menu also provides **Add Workspace Project...** for `.code-workspace` files and **Add Current Project to Slots**. Adding an already listed project leaves its position unchanged; adding a saved but unlisted project puts it back in the next slot.
 
 The sidebar contains only **Slots** and **Graph**. Existing slots, shortcuts, imported group/tag slots, and backup data remain compatible; there is no separate Workspaces panel or group-assignment step.
+
+## Duplicate and rename projects
+
+Right-click a project in **Slots** and choose **Duplicate Project...**, then enter a name. The duplicate is appended to Slots and opens in its own window. Each copy has a separate workspace identity, so clicking its slot returns to that window. Duplication always opens a new window, regardless of the settings for adding or opening ordinary projects.
+
+Both windows edit the **same source files and Git branch**. They can maintain separate editor layouts and workspace settings; running terminals and unsaved editor buffers are not copied. To work on independent files or branches, add a separate checkout as another project.
+
+Choose **Rename Project...** to change the name in Slots. This leaves the source folder, slot position, and workspace identity intact. For duplicates, the window title also follows the new name. Both actions are available in the Command Palette and apply to individual project slots.
+
+![Project context menu with Duplicate Project and Rename Project actions](images/previews/fast-switch-projects-duplicate-project.png)
+
+Duplicates use small `.code-workspace` files in the extension host's global storage, under `project-workspaces/`. When copying an existing workspace, folder references are resolved from the original location; settings, tasks, launch configurations, and comments are retained, with a new window title. No source files or symlinks are created in your repository.
+
+Removing a duplicate removes its slot and registration, leaving its workspace file and open window intact. You can re-add it from that window with **Add Current Project to Slots**. JSON exports contain project paths, not the generated workspace files: back up the `project-workspaces` directory as well when migrating to another host.
 
 ## Git graph
 
@@ -169,3 +174,36 @@ Report Fast Switch Projects issues at [AgeYY/fast-switch-projects](https://githu
 Fast Switch Projects is independently maintained and is based on the open-source [Projects extension by L13|RARY](https://github.com/L13/vscode-projects). It is not affiliated with or endorsed by the original author.
 
 The original work is copyright © 2019–2023 L13|RARY. Subsequent modifications are copyright © 2026 AgeYY. See the bundled `LICENSE` file for the software license and [LICENSE-ICONS.md](LICENSE-ICONS.md) for third-party icon notices.
+
+### Open every listed project
+
+Run **Fast Switch Projects: Open All Listed Projects** from the Command Palette, or
+choose it from the Slots view menu. It opens unique projects in slot order, including
+projects inside listed groups and tags. Separate workspace files remain separate
+sessions, even when they reference the same folder. The current window stays open.
+The command pauses single-window hiding so all opened windows can remain visible.
+It does not register projects automatically. Use the progress notification to stop
+launching further windows; already opened windows stay open.
+
+### Open and register the entire list
+
+Run **Fast Switch Projects: Open and Register All Listed Projects** from the
+Command Palette or Slots menu (Windows Companion 0.1.2 required locally). It saves
+approval for the listed workspace identities and opens their windows. Already
+running and newly opened approved windows register automatically. It reports
+registration progress and pending startup/trust requirements, while leaving
+hiding paused. Then run **Enable Single Visible Window Mode** in the desired
+active window. Unlisted windows remain unmanaged. **Unregister This Project
+Window** revokes approval persistently; cancellation stops further opens but
+retains approvals already saved for the list.
+
+### Single Windows installation
+
+The Windows distribution is `fast-switch-projects-windows-0.2.0.vsix`. Install
+only that package locally using **Extensions: Install from VSIX...**. It bundles
+window management and project engine 1.5.4, automatically installing the engine
+locally or on the connected Remote-SSH host/profile as appropriate. Remote-SSH
+itself and a working SSH connection remain prerequisites. Trust workspaces when
+prompted; an update of an already active engine can require a window reload.
+The engine can appear separately in Extensions, but requires no separate user
+installation. Existing project and registration identities are preserved.

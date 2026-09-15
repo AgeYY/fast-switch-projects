@@ -1,0 +1,7 @@
+native/**
+test/**
+build.ps1
+*.vsix
+prototype/**
+!bundled/engine.vsix
+package-windows.ps1

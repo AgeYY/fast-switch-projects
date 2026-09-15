@@ -4,3 +4,7 @@ node_modules
 test/
 !src/test/
 .vscode-test/
+companion/bin/
+!companion/test/
+prototype/results/
+companion/bundled/

@@ -6,6 +6,7 @@ import { remove } from '../@l13/arrays';
 
 import * as fse from './fse';
 import * as settings from './settings';
+import { openInSingleWindow } from './singleWindow';
 import { createUri } from './uris';
 import { getCurrentWorkspacePath } from './workspaces';
 
@@ -19,9 +20,10 @@ import { getCurrentWorkspacePath } from './workspaces';
 
 //	Exports ____________________________________________________________________
 
-export function open (pathname: string, openInNewWindow?: boolean) {
+export async function open (pathname: string, openInNewWindow?: boolean) {
 	
 	if (!pathname) return;
+	if (await openInSingleWindow(createUri(pathname))) return;
 	
 	const newWindow = openInNewWindow ?? settings.openInNewWindow();
 	

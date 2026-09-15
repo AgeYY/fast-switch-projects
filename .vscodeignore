@@ -14,8 +14,11 @@ gulpfile.js
 tsconfig.json
 **/*.map
 **/*.ts
+out/integration/**
 
 notes
 notes/**
 data
 data/**
+companion/**
+prototype/**

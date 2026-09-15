@@ -1,0 +1,6 @@
+{
+  "name": "fsp-prototype-harness", "publisher": "local", "version": "0.0.3",
+  "engines": { "vscode": "^1.85.0" }, "extensionKind": ["ui"],
+  "main": "extension.js", "activationEvents": ["onStartupFinished"],
+  "capabilities": { "untrustedWorkspaces": { "supported": "limited", "description": "Only read-only fixture diagnostics run before workspace trust." } }
+}

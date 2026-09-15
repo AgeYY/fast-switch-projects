@@ -61,6 +61,7 @@ export class ProjectsDialog {
 	
 	public async save (project?: Project) {
 		
+		this.hotkeySlotsState.refresh();
 		const path: string = project ? project.path : getCurrentWorkspacePath();
 		
 		if (path) {
@@ -127,6 +128,7 @@ export class ProjectsDialog {
 
 	private async addAllAndOpen (uris: vscode.Uri[]) {
 
+		this.hotkeySlotsState.refresh();
 		this.projectsState.addAll(uris);
 		const projects: Project[] = [];
 		for (const uri of uris) {

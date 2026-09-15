@@ -18,7 +18,7 @@ describe('public branding', () => {
 
 		assert.strictEqual(manifest.name, 'fast-switch-projects');
 		assert.strictEqual(manifest.displayName, 'Fast Switch Projects');
-		assert.strictEqual(manifest.version, '1.5.0');
+		assert.strictEqual(manifest.version, '1.5.4');
 		assert.strictEqual(manifest.publisher, 'ZeyuanYe');
 		assert.strictEqual(manifest.repository.url, 'https://github.com/AgeYY/fast-switch-projects.git');
 		assert.strictEqual(manifest.bugs.url, 'https://github.com/AgeYY/fast-switch-projects/issues');
@@ -60,18 +60,16 @@ describe('public branding', () => {
 
 	});
 
-	it('uses the approved repository-hosted Marketplace demo', () => {
+	it('references existing README screenshots and excludes previews from the package', () => {
 
 		const readme = fs.readFileSync(path.resolve(root, 'README.md'), 'utf-8');
 		const vscodeignore = fs.readFileSync(path.resolve(root, '.vscodeignore'), 'utf-8');
-		const demoPath = 'images/previews/fast-switch-projects-demo.gif';
-		const demoUrl = 'https://raw.githubusercontent.com/AgeYY/fast-switch-projects/main/images/previews/fast-switch-projects-demo.gif';
-		const demo = fs.statSync(path.resolve(root, demoPath));
+		const screenshots = readme.match(/!\[[^\]]*\]\(images\/previews\/[^)]+\)/g) || [];
 
-		assert.ok(readme.includes(`](${demoUrl})`));
-		assert.strictEqual((readme.match(/!\[/g) || []).length, 1);
-		assert.ok(demo.isFile());
-		assert.ok(demo.size < 1024 * 1024);
+		assert.ok(screenshots.length >= 2);
+		for (const screenshot of screenshots) {
+			assert.ok(fs.statSync(path.resolve(root, screenshot.slice(screenshot.indexOf('](') + 2, -1))).isFile());
+		}
 		assert.ok(vscodeignore.split(/\r?\n/).includes('images/previews/**'));
 
 	});

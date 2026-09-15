@@ -16,13 +16,13 @@ import type { Slot } from '../../../@types/hotkeys';
 
 export class SlotTreeItem extends TreeItem {
 
-	public readonly contextValue: 'empty-slot'|'slot';
+	public readonly contextValue: 'empty-slot'|'slot'|'project-slot';
 
 	public constructor (public readonly index: number, public readonly slot?: Slot, isCurrent = false) {
 
 		super(slot ? `${index}. ${slot.label}` : `${index}. (empty)`);
 
-		this.contextValue = slot ? 'slot' : 'empty-slot';
+		this.contextValue = slot?.path ? 'project-slot' : slot ? 'slot' : 'empty-slot';
 		this.description = slot ? getDescription(slot, isCurrent) : '';
 		this.iconPath = new ThemeIcon(slot ? getSlotIcon(slot) : 'circle-outline');
 

@@ -18,7 +18,9 @@ module.exports = [
 		watch: 'test/**/*.js',
 		task: (done) => {
 			
-			const tests = child_process.spawn('npm', ['test']).on('close', () => done());
+			const tests = child_process.spawn(process.execPath, ['test/index.js'])
+				.on('error', done)
+				.on('close', (code) => done(code ? new Error(`Tests exited with ${code}`) : undefined));
 			
 			let logger = (buffer) => buffer.toString().split(/\n/).forEach((message) => message && console.log(message));
 			
@@ -30,4 +32,3 @@ module.exports = [
 ];
 
 //	Functions __________________________________________________________________
-

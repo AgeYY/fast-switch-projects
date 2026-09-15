@@ -36,6 +36,12 @@ export function activate (context: vscode.ExtensionContext) {
 	workspaces.activate(context);
 	
 	if (context.extensionMode === vscode.ExtensionMode.Development) developer.activate(context);
+	context.subscriptions.push(vscode.commands.registerCommand('fastSwitchProjects.engine.status', () => ({
+		version: context.extension.packageJSON.version,
+		kind: context.extension.extensionKind,
+		platform: process.platform,
+		remoteName: vscode.env.remoteName || null,
+	})));
 	
 }
 

@@ -2,7 +2,7 @@
 	"name": "fast-switch-projects",
 	"displayName": "Fast Switch Projects",
 	"description": "A keyboard-first project switcher with ordered slots, drag-and-drop reordering, and automatic window opening",
-	"version": "1.5.0",
+	"version": "1.5.4",
 	"publisher": "ZeyuanYe",
 	"license": "SEE LICENSE IN LICENSE",
 	"homepage": "https://github.com/AgeYY/fast-switch-projects#readme",
@@ -37,8 +37,7 @@
 		"onStartupFinished"
 	],
 	"extensionKind": [
-		"workspace",
-		"ui"
+		"workspace"
 	],
 	"capabilities": {
 		"virtualWorkspaces": true,
@@ -82,6 +81,16 @@
 			}
 		],
 		"commands": [
+			{
+				"command": "fastSwitchProjects.action.slots.openAllListedProjects",
+				"category": "Fast Switch Projects",
+				"title": "Open All Listed Projects"
+			},
+			{
+				"command": "fastSwitchProjects.action.slots.openAndRegisterAllListedProjects",
+				"category": "Fast Switch Projects",
+				"title": "Open and Register All Listed Projects"
+			},
 			{
 				"command": "fastSwitchProjects.graph.fetch",
 				"category": "Fast Switch Projects",
@@ -656,6 +665,16 @@
 				"title": "Show Output Channel"
 			},
 			{
+				"command": "fastSwitchProjects.action.slots.duplicateProject",
+				"category": "Fast Switch Projects",
+				"title": "Duplicate Project..."
+			},
+			{
+				"command": "fastSwitchProjects.action.slots.renameProject",
+				"category": "Fast Switch Projects",
+				"title": "Rename Project..."
+			},
+			{
 				"command": "fastSwitchProjects.action.slots.removeProject",
 				"category": "Fast Switch Projects",
 				"title": "Remove Project from Slots",
@@ -1086,6 +1105,16 @@
 			],
 			"view/title": [
 				{
+					"command": "fastSwitchProjects.action.slots.openAllListedProjects",
+					"when": "view == fastSwitchProjectsSlots",
+					"group": "project@1"
+				},
+				{
+					"command": "fastSwitchProjects.action.slots.openAndRegisterAllListedProjects",
+					"when": "view == fastSwitchProjectsSlots",
+					"group": "project@1.1"
+				},
+				{
 					"command": "fastSwitchProjects.graph.fetch",
 					"when": "view == fastSwitchProjectsGraph",
 					"group": "navigation@1"
@@ -1128,29 +1157,39 @@
 			],
 			"view/item/context": [
 				{
+					"command": "fastSwitchProjects.action.slots.duplicateProject",
+					"when": "view == fastSwitchProjectsSlots && viewItem == project-slot",
+					"group": "1_project@1"
+				},
+				{
+					"command": "fastSwitchProjects.action.slots.renameProject",
+					"when": "view == fastSwitchProjectsSlots && viewItem == project-slot",
+					"group": "1_project@2"
+				},
+				{
 					"command": "fastSwitchProjects.action.slots.removeProject",
-					"when": "view == fastSwitchProjectsSlots && viewItem == slot",
+					"when": "view == fastSwitchProjectsSlots && viewItem =~ /^(project-slot|slot)$/",
 					"group": "inline@1"
 				},
 				{
 					"command": "fastSwitchProjects.action.hotkeys.moveSlotUp",
 					"group": "navigation@1",
-					"when": "view == fastSwitchProjectsSlots && viewItem == slot"
+					"when": "view == fastSwitchProjectsSlots && viewItem =~ /^(project-slot|slot)$/"
 				},
 				{
 					"command": "fastSwitchProjects.action.hotkeys.moveSlotDown",
 					"group": "navigation@2",
-					"when": "view == fastSwitchProjectsSlots && viewItem == slot"
+					"when": "view == fastSwitchProjectsSlots && viewItem =~ /^(project-slot|slot)$/"
 				},
 				{
 					"command": "fastSwitchProjects.action.hotkeys.insertSlot",
 					"group": "navigation@1",
-					"when": "view == fastSwitchProjectsSlots && viewItem == slot"
+					"when": "view == fastSwitchProjectsSlots && viewItem =~ /^(project-slot|slot)$/"
 				},
 				{
 					"command": "fastSwitchProjects.action.slots.removeProject",
 					"group": "7_modification@1",
-					"when": "view == fastSwitchProjectsSlots && viewItem == slot"
+					"when": "view == fastSwitchProjectsSlots && viewItem =~ /^(project-slot|slot)$/"
 				},
 				{
 					"command": "fastSwitchProjects.action.favoriteGroup.rename",
