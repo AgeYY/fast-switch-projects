@@ -2,7 +2,7 @@
 	"name": "fast-switch-projects",
 	"displayName": "Fast Switch Projects",
 	"description": "A keyboard-first project switcher with ordered slots, drag-and-drop reordering, and automatic window opening",
-	"version": "1.5.4",
+	"version": "1.5.5",
 	"publisher": "ZeyuanYe",
 	"license": "SEE LICENSE IN LICENSE",
 	"homepage": "https://github.com/AgeYY/fast-switch-projects#readme",
@@ -683,92 +683,92 @@
 		],
 		"keybindings": [
 			{
-				"mac": "meta+l meta+i",
+				"mac": "ctrl+l ctrl+i",
 				"key": "ctrl+l ctrl+i",
 				"command": "workbench.view.extension.fastSwitchProjects"
 			},
 			{
-				"mac": "meta+alt+p",
+				"mac": "ctrl+alt+p",
 				"key": "ctrl+alt+p",
 				"command": "fastSwitchProjects.action.favorites.pickFavorite"
 			},
 			{
-				"mac": "meta+alt+shift+p",
+				"mac": "ctrl+alt+shift+p",
 				"key": "ctrl+alt+shift+p",
 				"command": "fastSwitchProjects.action.workspaces.pickWorkspace"
 			},
 			{
-				"mac": "meta+l meta+t",
+				"mac": "ctrl+l ctrl+t",
 				"key": "ctrl+l ctrl+t",
 				"command": "fastSwitchProjects.action.tag.pickTag"
 			},
 			{
-				"mac": "meta+l meta+1",
+				"mac": "ctrl+l ctrl+1",
 				"key": "ctrl+l ctrl+1",
 				"command": "fastSwitchProjects.action.hotkey.slot1"
 			},
 			{
-				"mac": "meta+l meta+2",
+				"mac": "ctrl+l ctrl+2",
 				"key": "ctrl+l ctrl+2",
 				"command": "fastSwitchProjects.action.hotkey.slot2"
 			},
 			{
-				"mac": "meta+l meta+3",
+				"mac": "ctrl+l ctrl+3",
 				"key": "ctrl+l ctrl+3",
 				"command": "fastSwitchProjects.action.hotkey.slot3"
 			},
 			{
-				"mac": "meta+l meta+4",
+				"mac": "ctrl+l ctrl+4",
 				"key": "ctrl+l ctrl+4",
 				"command": "fastSwitchProjects.action.hotkey.slot4"
 			},
 			{
-				"mac": "meta+l meta+5",
+				"mac": "ctrl+l ctrl+5",
 				"key": "ctrl+l ctrl+5",
 				"command": "fastSwitchProjects.action.hotkey.slot5"
 			},
 			{
-				"mac": "meta+l meta+6",
+				"mac": "ctrl+l ctrl+6",
 				"key": "ctrl+l ctrl+6",
 				"command": "fastSwitchProjects.action.hotkey.slot6"
 			},
 			{
-				"mac": "meta+l meta+7",
+				"mac": "ctrl+l ctrl+7",
 				"key": "ctrl+l ctrl+7",
 				"command": "fastSwitchProjects.action.hotkey.slot7"
 			},
 			{
-				"mac": "meta+l meta+8",
+				"mac": "ctrl+l ctrl+8",
 				"key": "ctrl+l ctrl+8",
 				"command": "fastSwitchProjects.action.hotkey.slot8"
 			},
 			{
-				"mac": "meta+l meta+9",
+				"mac": "ctrl+l ctrl+9",
 				"key": "ctrl+l ctrl+9",
 				"command": "fastSwitchProjects.action.hotkey.slot9"
 			},
 			{
-				"mac": "meta+l meta+j",
+				"mac": "ctrl+l ctrl+j",
 				"key": "ctrl+l ctrl+j",
 				"command": "fastSwitchProjects.action.hotkey.nextSlot"
 			},
 			{
-				"mac": "meta+l meta+k",
+				"mac": "ctrl+l ctrl+k",
 				"key": "ctrl+l ctrl+k",
 				"command": "fastSwitchProjects.action.hotkey.previousSlot"
 			},
 			{
-				"mac": "meta+l meta+a",
+				"mac": "ctrl+l ctrl+a",
 				"key": "ctrl+l ctrl+a",
 				"command": "fastSwitchProjects.action.hotkey.firstSlot"
 			},
 			{
-				"mac": "meta+l meta+e",
+				"mac": "ctrl+l ctrl+e",
 				"key": "ctrl+l ctrl+e",
 				"command": "fastSwitchProjects.action.hotkey.lastSlot"
 			},
 			{
-				"mac": "meta+l meta+0",
+				"mac": "ctrl+l ctrl+0",
 				"key": "ctrl+l ctrl+0",
 				"command": "fastSwitchProjects.action.hotkey.previousWorkspace"
 			}

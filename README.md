@@ -48,7 +48,7 @@ some overlapping default shortcuts; configure those if using both.
 
 ## Quick start
 
-1. Open Fast Switch Projects with `Ctrl+L Ctrl+I` (`Cmd+L Cmd+I` on macOS).
+1. Open Fast Switch Projects with `Ctrl+L Ctrl+I` on Windows, Linux, and macOS.
 2. Click **+** in the **Slots** header and choose a project folder. It is added to the end of the list automatically.
 3. Drag slot rows to reorder them. Click a row or use its shortcut to switch projects.
 4. Click **×** on a row, or right-click and choose **Remove Project from Slots**, to remove it. Later slots move up to close the gap. Project files and open windows remain intact.
@@ -114,15 +114,17 @@ Priorities are local preferences stored under the repository's Git common direct
 
 ## Keyboard shortcuts
 
+On macOS, use the **Control** key, not Command. Both strokes of each chord use Control.
+
 | Action | Windows/Linux | macOS |
 | --- | --- | --- |
-| Open Fast Switch Projects | `Ctrl+L Ctrl+I` | `Cmd+L Cmd+I` |
-| Open slots 1–9 | `Ctrl+L Ctrl+1` … `Ctrl+L Ctrl+9` | `Cmd+L Cmd+1` … `Cmd+L Cmd+9` |
-| Next occupied slot | `Ctrl+L Ctrl+J` | `Cmd+L Cmd+J` |
-| Previous occupied slot | `Ctrl+L Ctrl+K` | `Cmd+L Cmd+K` |
-| First occupied slot | `Ctrl+L Ctrl+A` | `Cmd+L Cmd+A` |
-| Last occupied slot | `Ctrl+L Ctrl+E` | `Cmd+L Cmd+E` |
-| Previous workspace | `Ctrl+L Ctrl+0` | `Cmd+L Cmd+0` |
+| Open Fast Switch Projects | `Ctrl+L Ctrl+I` | `Ctrl+L Ctrl+I` |
+| Open slots 1–9 | `Ctrl+L Ctrl+1` … `Ctrl+L Ctrl+9` | `Ctrl+L Ctrl+1` … `Ctrl+L Ctrl+9` |
+| Next occupied slot | `Ctrl+L Ctrl+J` | `Ctrl+L Ctrl+J` |
+| Previous occupied slot | `Ctrl+L Ctrl+K` | `Ctrl+L Ctrl+K` |
+| First occupied slot | `Ctrl+L Ctrl+A` | `Ctrl+L Ctrl+A` |
+| Last occupied slot | `Ctrl+L Ctrl+E` | `Ctrl+L Ctrl+E` |
+| Previous workspace | `Ctrl+L Ctrl+0` | `Ctrl+L Ctrl+0` |
 
 Slots above 9 remain available by clicking them or running **Fast Switch Projects: Open Slot...** from the Command Palette.
 

@@ -18,7 +18,7 @@ describe('public branding', () => {
 
 		assert.strictEqual(manifest.name, 'fast-switch-projects');
 		assert.strictEqual(manifest.displayName, 'Fast Switch Projects');
-		assert.strictEqual(manifest.version, '1.5.4');
+		assert.strictEqual(manifest.version, '1.5.5');
 		assert.strictEqual(manifest.publisher, 'ZeyuanYe');
 		assert.strictEqual(manifest.repository.url, 'https://github.com/AgeYY/fast-switch-projects.git');
 		assert.strictEqual(manifest.bugs.url, 'https://github.com/AgeYY/fast-switch-projects/issues');

@@ -2,6 +2,12 @@
 
 All notable changes to Fast Switch Projects are documented in this file.
 
+## [1.5.5] - 2026-10-02
+
+### Changed
+
+- Use Control instead of Command for all macOS shortcuts, matching Windows/Linux. Project navigation uses `Ctrl+L` followed by the corresponding Control shortcut.
+
 ## [1.5.0] - 2026-09-13
 
 ### Added

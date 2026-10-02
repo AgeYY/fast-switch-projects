@@ -48,11 +48,11 @@ Next and previous navigation skip empty slots and wrap around at the ends. First
 
 | Action | Windows/Linux | macOS |
 | --- | --- | --- |
-| Open extension view | `Ctrl+L Ctrl+I` | `Cmd+L Cmd+I` |
-| Next slot | `Ctrl+L Ctrl+J` | `Cmd+L Cmd+J` |
-| Previous slot | `Ctrl+L Ctrl+K` | `Cmd+L Cmd+K` |
-| First slot | `Ctrl+L Ctrl+A` | `Cmd+L Cmd+A` |
-| Last slot | `Ctrl+L Ctrl+E` | `Cmd+L Cmd+E` |
+| Open extension view | `Ctrl+L Ctrl+I` | `Ctrl+L Ctrl+I` |
+| Next slot | `Ctrl+L Ctrl+J` | `Ctrl+L Ctrl+J` |
+| Previous slot | `Ctrl+L Ctrl+K` | `Ctrl+L Ctrl+K` |
+| First slot | `Ctrl+L Ctrl+A` | `Ctrl+L Ctrl+A` |
+| Last slot | `Ctrl+L Ctrl+E` | `Ctrl+L Ctrl+E` |
 
 ## Synchronization
 
@@ -73,7 +73,7 @@ The JSON backup contains projects, favorites, workspace groups, favorite groups,
 npm ci
 npm run compile
 npm test
-npx @vscode/vsce package --no-dependencies --out fast-switch-projects-engine-1.5.4.vsix
+npx @vscode/vsce package --no-dependencies --out fast-switch-projects-engine-1.5.5.vsix
 ```
 
 The compile step builds the extension and runs its tests; `npm test` reruns the compiled test suite. Runtime code is bundled, so packaging does not need to include development dependencies. The generated VSIX is intentionally ignored by Git.
